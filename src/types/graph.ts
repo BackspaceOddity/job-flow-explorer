@@ -6,6 +6,13 @@ export type RelationType = 'depends_on' | 'enables' | 'precedes' | 'influences';
 
 export type DirectionMode = 'before' | 'depends'; // A→B: "A before B" or "B depends on A"
 
+export type JobStage = 
+  | 'define' | 'locate' | 'prepare' | 'confirm'  // Phase 1: Before
+  | 'execute' | 'monitor' | 'modify'              // Phase 2: During
+  | 'conclude' | 'follow_up';                     // Phase 3: After
+
+export type ActiveView = 'graph' | 'jobmap' | 'matrix';
+
 export interface Job {
   id: string;
   title: string;
@@ -15,6 +22,12 @@ export interface Job {
   owner_role: string;
   job_type: JobType;
   notes: string;
+  // Underserved JTBD fields
+  importance: number | null; // 1-10 scale
+  satisfaction: number | null; // 1-10 scale
+  // Job Map fields
+  job_stage: JobStage | null;
+  main_job_id: string | null; // Which main JTBD this is a sub-job of
 }
 
 export interface Edge {
@@ -57,6 +70,7 @@ export interface GraphMetrics {
   sccs: string[][];
   cycles: string[][];
   topTensionNodes: string[];
+  topUnderservedNodes: string[];
 }
 
 export interface GraphFilters {
@@ -81,6 +95,8 @@ export interface ViewState {
   showCriticalPath: boolean;
   layout: 'force' | 'hierarchical';
   directionMode: DirectionMode;
+  activeView: ActiveView;
+  selectedMainJobId: string | null; // For job map view
 }
 
 // Import/Export JSON schema
@@ -94,6 +110,10 @@ export interface ImportData {
     owner_role?: string;
     job_type: JobType;
     notes?: string;
+    importance?: number | null;
+    satisfaction?: number | null;
+    job_stage?: JobStage | null;
+    main_job_id?: string | null;
   }>;
   edges: Array<{
     source_id: string;
@@ -102,4 +122,13 @@ export interface ImportData {
     weight?: number;
     notes?: string;
   }>;
+}
+
+// Opportunity scoring helpers
+export interface OpportunityScore {
+  importance: number;
+  satisfaction: number;
+  opportunityScore: number; // importance + max(importance - satisfaction, 0)
+  isUnderserved: boolean; // importance >= 5 AND satisfaction <= 5
+  quadrant: 'opportunity' | 'appropriately_served' | 'over_served' | 'dont_invest';
 }

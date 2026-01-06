@@ -6,17 +6,31 @@ import { GraphVisualization } from '@/components/GraphVisualization';
 import { JobFormDialog } from '@/components/JobFormDialog';
 import { EdgeFormDialog } from '@/components/EdgeFormDialog';
 import { ImportExportDialog } from '@/components/ImportExportDialog';
+import { OpportunityMatrix } from '@/components/OpportunityMatrix';
+import { JobMapView } from '@/components/JobMapView';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { RefreshCw, Route, Repeat, X, Sparkles, Target } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RefreshCw, Route, Repeat, X, Sparkles, Target, TrendingUp, Network, Map, Grid3X3 } from 'lucide-react';
 import { sampleJobs, generateSampleEdges } from '@/data/sampleData';
 import { toast } from 'sonner';
+import { computeOpportunityScore } from '@/lib/opportunityScoring';
 
 function GraphApp() {
-  const { state, recomputeMetrics, toggleCriticalPath, toggleLoops, setSubgraph, addJob, addEdge } = useGraph();
-  const { showCriticalPath, showLoops, subgraph } = state.viewState;
+  const { 
+    state, 
+    recomputeMetrics, 
+    toggleCriticalPath, 
+    toggleLoops, 
+    setSubgraph, 
+    setActiveView,
+    setSelectedMainJob,
+    addJob, 
+    addEdge 
+  } = useGraph();
+  const { showCriticalPath, showLoops, subgraph, activeView } = state.viewState;
   
   const [jobDialogOpen, setJobDialogOpen] = useState(false);
   const [edgeDialogOpen, setEdgeDialogOpen] = useState(false);
@@ -34,13 +48,20 @@ function GraphApp() {
   };
 
   const loadSampleData = () => {
-    const jobs = sampleJobs.map(j => addJob(j));
+    const jobs = sampleJobs.map(j => addJob({
+      ...j,
+      importance: null,
+      satisfaction: null,
+      job_stage: null,
+      main_job_id: null,
+    }));
     const edges = generateSampleEdges(jobs);
     edges.forEach(e => addEdge(e));
     toast.success('Sample data loaded!');
   };
 
   const topTension = state.metrics?.topTensionNodes.slice(0, 5) || [];
+  const topUnderserved = state.metrics?.topUnderservedNodes.slice(0, 5) || [];
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
@@ -63,21 +84,43 @@ function GraphApp() {
                 {state.jobs.length} jobs · {state.edges.length} edges
               </span>
             </div>
+            
+            {/* View Tabs */}
+            <Tabs value={activeView} onValueChange={(v) => setActiveView(v as typeof activeView)}>
+              <TabsList className="h-8">
+                <TabsTrigger value="graph" className="text-xs px-3">
+                  <Network className="w-3.5 h-3.5 mr-1.5" />
+                  Graph
+                </TabsTrigger>
+                <TabsTrigger value="matrix" className="text-xs px-3">
+                  <Grid3X3 className="w-3.5 h-3.5 mr-1.5" />
+                  I×S Matrix
+                </TabsTrigger>
+                <TabsTrigger value="jobmap" className="text-xs px-3">
+                  <Map className="w-3.5 h-3.5 mr-1.5" />
+                  Job Map
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
 
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <Switch id="critical" checked={showCriticalPath} onCheckedChange={toggleCriticalPath} />
-              <Label htmlFor="critical" className="text-sm flex items-center gap-1">
-                <Route className="w-3.5 h-3.5" /> Critical Path
-              </Label>
-            </div>
-            <div className="flex items-center gap-2">
-              <Switch id="loops" checked={showLoops} onCheckedChange={toggleLoops} />
-              <Label htmlFor="loops" className="text-sm flex items-center gap-1">
-                <Repeat className="w-3.5 h-3.5" /> Cycles
-              </Label>
-            </div>
+            {activeView === 'graph' && (
+              <>
+                <div className="flex items-center gap-2">
+                  <Switch id="critical" checked={showCriticalPath} onCheckedChange={toggleCriticalPath} />
+                  <Label htmlFor="critical" className="text-sm flex items-center gap-1">
+                    <Route className="w-3.5 h-3.5" /> Critical Path
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch id="loops" checked={showLoops} onCheckedChange={toggleLoops} />
+                  <Label htmlFor="loops" className="text-sm flex items-center gap-1">
+                    <Repeat className="w-3.5 h-3.5" /> Cycles
+                  </Label>
+                </div>
+              </>
+            )}
             <Button variant="secondary" size="sm" onClick={recomputeMetrics}>
               <RefreshCw className="w-4 h-4 mr-1.5" /> Recompute
             </Button>
@@ -90,7 +133,7 @@ function GraphApp() {
         </header>
 
         {/* Subgraph Banner */}
-        {subgraph.enabled && (
+        {subgraph.enabled && activeView === 'graph' && (
           <div className="h-10 bg-primary/10 border-b border-primary/20 flex items-center justify-between px-4">
             <span className="text-sm text-primary">
               Viewing subgraph: {subgraph.hops} hops from selected node
@@ -115,30 +158,64 @@ function GraphApp() {
           </div>
         )}
 
-        {/* Graph Canvas */}
+        {/* Main View Area */}
         <div className="flex-1 relative">
-          <GraphVisualization />
+          {activeView === 'graph' && (
+            <>
+              <GraphVisualization />
+              
+              {/* Top Tension Nodes Overlay */}
+              {topTension.length > 0 && (
+                <div className="absolute top-4 left-4 p-3 rounded-lg bg-card/90 backdrop-blur border border-border max-w-xs">
+                  <h3 className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
+                    <Target className="w-3.5 h-3.5" /> Top Tension Points
+                  </h3>
+                  <div className="space-y-1">
+                    {topTension.map((id, i) => {
+                      const job = state.jobs.find(j => j.id === id);
+                      const score = state.metrics?.nodes.get(id)?.tensionScore || 0;
+                      return job ? (
+                        <div key={id} className="flex items-center gap-2 text-xs">
+                          <span className="font-mono text-muted-foreground">#{i + 1}</span>
+                          <span className="truncate flex-1">{job.title}</span>
+                          <span className="font-mono text-primary">{score.toFixed(1)}</span>
+                        </div>
+                      ) : null;
+                    })}
+                  </div>
+                </div>
+              )}
+              
+              {/* Top Underserved Overlay */}
+              {topUnderserved.length > 0 && (
+                <div className="absolute top-4 left-[280px] p-3 rounded-lg bg-card/90 backdrop-blur border border-border max-w-xs">
+                  <h3 className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
+                    <TrendingUp className="w-3.5 h-3.5 text-green-500" /> Top Underserved
+                  </h3>
+                  <div className="space-y-1">
+                    {topUnderserved.map((id, i) => {
+                      const job = state.jobs.find(j => j.id === id);
+                      const score = job ? computeOpportunityScore(job.importance, job.satisfaction) : 0;
+                      return job ? (
+                        <div key={id} className="flex items-center gap-2 text-xs">
+                          <span className="font-mono text-muted-foreground">#{i + 1}</span>
+                          <span className="truncate flex-1">{job.title}</span>
+                          <span className="font-mono text-green-500">{score}</span>
+                        </div>
+                      ) : null;
+                    })}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
           
-          {/* Top Tension Nodes Overlay */}
-          {topTension.length > 0 && (
-            <div className="absolute top-4 left-4 p-3 rounded-lg bg-card/90 backdrop-blur border border-border max-w-xs">
-              <h3 className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
-                <Target className="w-3.5 h-3.5" /> Top Tension Points
-              </h3>
-              <div className="space-y-1">
-                {topTension.map((id, i) => {
-                  const job = state.jobs.find(j => j.id === id);
-                  const score = state.metrics?.nodes.get(id)?.tensionScore || 0;
-                  return job ? (
-                    <div key={id} className="flex items-center gap-2 text-xs">
-                      <span className="font-mono text-muted-foreground">#{i + 1}</span>
-                      <span className="truncate flex-1">{job.title}</span>
-                      <span className="font-mono text-primary">{score.toFixed(1)}</span>
-                    </div>
-                  ) : null;
-                })}
-              </div>
-            </div>
+          {activeView === 'matrix' && (
+            <OpportunityMatrix className="h-full" />
+          )}
+          
+          {activeView === 'jobmap' && (
+            <JobMapView className="h-full" />
           )}
         </div>
       </div>

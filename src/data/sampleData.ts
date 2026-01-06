@@ -1,7 +1,7 @@
 import { Job, Edge, JobType, RelationType } from '@/types/graph';
 
 // Sample data for demonstration
-export const sampleJobs: Omit<Job, 'id'>[] = [
+export const sampleJobs: Omit<Job, 'id' | 'importance' | 'satisfaction' | 'job_stage' | 'main_job_id'>[] = [
   {
     title: 'Decide whether we can hire in a new country',
     description: 'Top-level decision job for international expansion',

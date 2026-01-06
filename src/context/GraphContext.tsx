@@ -11,9 +11,11 @@ import type {
   DirectionMode,
   JobType,
   RelationType,
-  ImportData
+  ImportData,
+  ActiveView
 } from '@/types/graph';
 import { computeGraphMetrics, getSubgraph } from '@/lib/graphAlgorithms';
+import { getTopUnderservedJobs } from '@/lib/opportunityScoring';
 
 const STORAGE_KEY = 'jobs-graph-mapper-data';
 
@@ -45,6 +47,8 @@ const initialViewState: ViewState = {
   showCriticalPath: false,
   layout: 'force',
   directionMode: 'before',
+  activeView: 'graph',
+  selectedMainJobId: null,
 };
 
 const initialState: GraphState = {
@@ -76,6 +80,8 @@ type Action =
   | { type: 'TOGGLE_CRITICAL_PATH' }
   | { type: 'SET_LAYOUT'; payload: 'force' | 'hierarchical' }
   | { type: 'SET_DIRECTION_MODE'; payload: DirectionMode }
+  | { type: 'SET_ACTIVE_VIEW'; payload: ActiveView }
+  | { type: 'SET_SELECTED_MAIN_JOB'; payload: string | null }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_SAVED'; payload: Date };
 
@@ -146,6 +152,10 @@ function reducer(state: GraphState, action: Action): GraphState {
         owner_role: j.owner_role || '',
         job_type: j.job_type,
         notes: j.notes || '',
+        importance: j.importance ?? null,
+        satisfaction: j.satisfaction ?? null,
+        job_stage: j.job_stage ?? null,
+        main_job_id: j.main_job_id ?? null,
       }));
       const importedEdges: Edge[] = edges.map(e => ({
         id: uuidv4(),
@@ -232,6 +242,18 @@ function reducer(state: GraphState, action: Action): GraphState {
         viewState: { ...state.viewState, directionMode: action.payload },
       };
     
+    case 'SET_ACTIVE_VIEW':
+      return {
+        ...state,
+        viewState: { ...state.viewState, activeView: action.payload },
+      };
+    
+    case 'SET_SELECTED_MAIN_JOB':
+      return {
+        ...state,
+        viewState: { ...state.viewState, selectedMainJobId: action.payload },
+      };
+    
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };
     
@@ -269,6 +291,8 @@ interface GraphContextValue {
   toggleCriticalPath: () => void;
   setLayout: (layout: 'force' | 'hierarchical') => void;
   setDirectionMode: (mode: DirectionMode) => void;
+  setActiveView: (view: ActiveView) => void;
+  setSelectedMainJob: (id: string | null) => void;
   // Computed values
   filteredData: { jobs: Job[]; edges: Edge[] };
   uniqueRoles: string[];
@@ -286,7 +310,15 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const data = JSON.parse(stored) as GraphData;
-        dispatch({ type: 'LOAD_DATA', payload: data });
+        // Migrate old data that doesn't have new fields
+        const migratedJobs = data.jobs.map(job => ({
+          ...job,
+          importance: (job as Job).importance ?? null,
+          satisfaction: (job as Job).satisfaction ?? null,
+          job_stage: (job as Job).job_stage ?? null,
+          main_job_id: (job as Job).main_job_id ?? null,
+        }));
+        dispatch({ type: 'LOAD_DATA', payload: { jobs: migratedJobs, edges: data.edges } });
       } else {
         dispatch({ type: 'SET_LOADING', payload: false });
       }
@@ -312,7 +344,12 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
   // Recompute metrics when data changes
   useEffect(() => {
     if (state.jobs.length > 0) {
-      const metrics = computeGraphMetrics(state.jobs, state.edges);
+      const baseMetrics = computeGraphMetrics(state.jobs, state.edges);
+      const topUnderservedNodes = getTopUnderservedJobs(state.jobs, 10);
+      const metrics: GraphMetrics = {
+        ...baseMetrics,
+        topUnderservedNodes,
+      };
       dispatch({ type: 'SET_METRICS', payload: metrics });
     }
   }, [state.jobs, state.edges]);
@@ -362,7 +399,12 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
   
   // Metrics
   const recomputeMetrics = useCallback(() => {
-    const metrics = computeGraphMetrics(state.jobs, state.edges);
+    const baseMetrics = computeGraphMetrics(state.jobs, state.edges);
+    const topUnderservedNodes = getTopUnderservedJobs(state.jobs, 10);
+    const metrics: GraphMetrics = {
+      ...baseMetrics,
+      topUnderservedNodes,
+    };
     dispatch({ type: 'SET_METRICS', payload: metrics });
   }, [state.jobs, state.edges]);
   
@@ -397,6 +439,14 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
   
   const setDirectionMode = useCallback((mode: DirectionMode) => {
     dispatch({ type: 'SET_DIRECTION_MODE', payload: mode });
+  }, []);
+  
+  const setActiveView = useCallback((view: ActiveView) => {
+    dispatch({ type: 'SET_ACTIVE_VIEW', payload: view });
+  }, []);
+  
+  const setSelectedMainJob = useCallback((id: string | null) => {
+    dispatch({ type: 'SET_SELECTED_MAIN_JOB', payload: id });
   }, []);
   
   // Computed: filtered data
@@ -476,6 +526,8 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
     toggleCriticalPath,
     setLayout,
     setDirectionMode,
+    setActiveView,
+    setSelectedMainJob,
     filteredData,
     uniqueRoles,
     uniqueLevels,
