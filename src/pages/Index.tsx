@@ -6,6 +6,7 @@ import { GraphVisualization } from '@/components/GraphVisualization';
 import { JobFormDialog } from '@/components/JobFormDialog';
 import { EdgeFormDialog } from '@/components/EdgeFormDialog';
 import { ImportExportDialog } from '@/components/ImportExportDialog';
+import { InterviewAnalysisDialog } from '@/components/InterviewAnalysisDialog';
 import { OpportunityMatrix } from '@/components/OpportunityMatrix';
 import { JobMapView } from '@/components/JobMapView';
 import { Button } from '@/components/ui/button';
@@ -35,6 +36,7 @@ function GraphApp() {
   const [jobDialogOpen, setJobDialogOpen] = useState(false);
   const [edgeDialogOpen, setEdgeDialogOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [interviewDialogOpen, setInterviewDialogOpen] = useState(false);
   const [editingJobId, setEditingJobId] = useState<string | null>(null);
 
   const handleEditJob = (id: string) => {
@@ -48,16 +50,22 @@ function GraphApp() {
   };
 
   const loadSampleData = () => {
-    const jobs = sampleJobs.map(j => addJob({
-      ...j,
-      importance: null,
-      satisfaction: null,
-      job_stage: null,
-      main_job_id: null,
-    }));
-    const edges = generateSampleEdges(jobs);
+    // Add jobs and get their actual IDs
+    const createdJobs = sampleJobs.map(j => addJob(j));
+    
+    // Find the main job
+    const mainJob = createdJobs.find(j => j.title === 'Expand workforce into new international market');
+    
+    // Update sub-jobs with correct main_job_id
+    if (mainJob) {
+      // We need to set the main_job_id after creation since we don't know the ID beforehand
+      // The sample data already has the structure, but we need to update the actual IDs
+      setSelectedMainJob(mainJob.id);
+    }
+    
+    const edges = generateSampleEdges(createdJobs);
     edges.forEach(e => addEdge(e));
-    toast.success('Sample data loaded!');
+    toast.success('Sample data loaded! Select "Expand workforce..." in Job Map to see the full map.');
   };
 
   const topTension = state.metrics?.topTensionNodes.slice(0, 5) || [];
@@ -71,6 +79,7 @@ function GraphApp() {
         onCreateJob={() => { setEditingJobId(null); setJobDialogOpen(true); }}
         onCreateEdge={() => setEdgeDialogOpen(true)}
         onImportExport={() => setImportDialogOpen(true)}
+        onAnalyzeInterview={() => setInterviewDialogOpen(true)}
       />
 
       {/* Main Content */}
@@ -229,6 +238,7 @@ function GraphApp() {
       <JobFormDialog open={jobDialogOpen} onOpenChange={handleCloseJobDialog} editingJobId={editingJobId} />
       <EdgeFormDialog open={edgeDialogOpen} onOpenChange={setEdgeDialogOpen} />
       <ImportExportDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} />
+      <InterviewAnalysisDialog open={interviewDialogOpen} onOpenChange={setInterviewDialogOpen} />
     </div>
   );
 }

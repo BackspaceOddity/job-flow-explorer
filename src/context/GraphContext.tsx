@@ -10,6 +10,7 @@ import type {
   SubgraphConfig,
   DirectionMode,
   JobType,
+  ICP,
   RelationType,
   ImportData,
   ActiveView
@@ -33,7 +34,7 @@ const initialViewState: ViewState = {
   selectedNodeId: null,
   hoveredNodeId: null,
   filters: {
-    ownerRoles: [],
+    icps: [],
     jobTypes: [],
     levels: [],
     searchQuery: '',
@@ -149,7 +150,7 @@ function reducer(state: GraphState, action: Action): GraphState {
         description: j.description || '',
         level: j.level,
         parent_id: j.parent_id,
-        owner_role: j.owner_role || '',
+        icp: j.icp || 'ceo',
         job_type: j.job_type,
         notes: j.notes || '',
         importance: j.importance ?? null,
@@ -295,7 +296,6 @@ interface GraphContextValue {
   setSelectedMainJob: (id: string | null) => void;
   // Computed values
   filteredData: { jobs: Job[]; edges: Edge[] };
-  uniqueRoles: string[];
   uniqueLevels: number[];
 }
 
@@ -313,6 +313,7 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
         // Migrate old data that doesn't have new fields
         const migratedJobs = data.jobs.map(job => ({
           ...job,
+          icp: (job as any).icp || (job as any).owner_role || 'ceo',
           importance: (job as Job).importance ?? null,
           satisfaction: (job as Job).satisfaction ?? null,
           job_stage: (job as Job).job_stage ?? null,
@@ -463,9 +464,9 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
       edges = subgraphData.edges;
     }
     
-    // Filter by roles
-    if (filters.ownerRoles.length > 0) {
-      jobs = jobs.filter(job => filters.ownerRoles.includes(job.owner_role));
+    // Filter by ICPs
+    if (filters.icps.length > 0) {
+      jobs = jobs.filter(job => filters.icps.includes(job.icp));
     }
     
     // Filter by job types
@@ -495,12 +496,6 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
     return { jobs, edges };
   }, [state.jobs, state.edges, state.viewState]);
   
-  // Unique roles and levels for filters
-  const uniqueRoles = useMemo(() => {
-    const roles = new Set(state.jobs.map(j => j.owner_role).filter(Boolean));
-    return Array.from(roles).sort();
-  }, [state.jobs]);
-  
   const uniqueLevels = useMemo(() => {
     const levels = new Set(state.jobs.map(j => j.level));
     return Array.from(levels).sort((a, b) => a - b);
@@ -529,7 +524,6 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
     setActiveView,
     setSelectedMainJob,
     filteredData,
-    uniqueRoles,
     uniqueLevels,
   };
   

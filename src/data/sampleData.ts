@@ -1,96 +1,281 @@
-import { Job, Edge, JobType, RelationType } from '@/types/graph';
+import { Job, Edge, JobType, RelationType, ICP, JobStage } from '@/types/graph';
 
-// Sample data for demonstration
-export const sampleJobs: Omit<Job, 'id' | 'importance' | 'satisfaction' | 'job_stage' | 'main_job_id'>[] = [
+// Main Job ID constant
+const MAIN_JOB_ID = 'main-job-expand-workforce';
+
+// Sample data for demonstration using Jim Kalbach's syntax: Verb + Object + Contextual Clarifier
+export const sampleJobs: Omit<Job, 'id'>[] = [
+  // Main JTBD
   {
-    title: 'Decide whether we can hire in a new country',
-    description: 'Top-level decision job for international expansion',
+    title: 'Expand workforce into new international market',
+    description: 'Strategic initiative to hire employees in a new country for global expansion',
     level: 0,
     parent_id: null,
-    owner_role: 'Founder',
+    icp: 'ceo',
     job_type: 'functional',
-    notes: 'Strategic decision with multiple dependencies',
+    notes: 'Core main job - all sub-jobs map to this',
+    importance: 10,
+    satisfaction: 2,
+    job_stage: null,
+    main_job_id: null,
   },
+  // Phase 1: Before - Define
   {
-    title: 'Gather legal constraints',
-    description: 'Research employment laws and regulations',
+    title: 'Define expansion goals for target market entry',
+    description: 'Establish clear objectives and success criteria for international hiring',
     level: 1,
     parent_id: null,
-    owner_role: 'HR',
-    job_type: 'functional',
-    notes: '',
-  },
-  {
-    title: 'Assess tax implications',
-    description: 'Understand corporate and payroll tax requirements',
-    level: 1,
-    parent_id: null,
-    owner_role: 'Finance',
+    icp: 'ceo',
     job_type: 'functional',
     notes: '',
+    importance: 9,
+    satisfaction: 3,
+    job_stage: 'define',
+    main_job_id: MAIN_JOB_ID,
   },
   {
-    title: 'Evaluate hiring costs',
-    description: 'Calculate total cost of employment',
+    title: 'Identify compliance requirements for target jurisdiction',
+    description: 'Research employment laws, regulations, and legal constraints',
     level: 1,
     parent_id: null,
-    owner_role: 'Finance',
+    icp: 'head_of_legal',
     job_type: 'functional',
     notes: '',
+    importance: 9,
+    satisfaction: 4,
+    job_stage: 'define',
+    main_job_id: MAIN_JOB_ID,
   },
+  // Phase 1: Before - Locate
   {
-    title: 'Research local talent market',
-    description: 'Understand availability of skills',
+    title: 'Locate qualified legal counsel in target jurisdiction',
+    description: 'Find and vet local legal partners for employment law guidance',
     level: 1,
     parent_id: null,
-    owner_role: 'Recruiting',
+    icp: 'head_of_legal',
     job_type: 'functional',
     notes: '',
+    importance: 8,
+    satisfaction: 4,
+    job_stage: 'locate',
+    main_job_id: MAIN_JOB_ID,
   },
   {
-    title: 'Feel confident about compliance',
-    description: 'Emotional need for risk mitigation',
+    title: 'Assess talent availability in target region',
+    description: 'Research local job market and candidate pool quality',
     level: 1,
     parent_id: null,
-    owner_role: 'Founder',
+    icp: 'hiring_manager',
+    job_type: 'functional',
+    notes: '',
+    importance: 8,
+    satisfaction: 5,
+    job_stage: 'locate',
+    main_job_id: MAIN_JOB_ID,
+  },
+  // Phase 1: Before - Prepare
+  {
+    title: 'Prepare compliance documentation for market entry',
+    description: 'Draft required legal and regulatory filings',
+    level: 2,
+    parent_id: null,
+    icp: 'head_of_legal',
+    job_type: 'functional',
+    notes: '',
+    importance: 7,
+    satisfaction: 5,
+    job_stage: 'prepare',
+    main_job_id: MAIN_JOB_ID,
+  },
+  {
+    title: 'Calculate employment costs for offshore workforce',
+    description: 'Estimate total cost including salary, benefits, taxes, and overhead',
+    level: 1,
+    parent_id: null,
+    icp: 'head_of_finance',
+    job_type: 'functional',
+    notes: '',
+    importance: 8,
+    satisfaction: 4,
+    job_stage: 'prepare',
+    main_job_id: MAIN_JOB_ID,
+  },
+  // Phase 1: Before - Confirm
+  {
+    title: 'Confirm budget allocation for international hiring',
+    description: 'Secure financial approval and allocate resources',
+    level: 1,
+    parent_id: null,
+    icp: 'head_of_finance',
+    job_type: 'functional',
+    notes: '',
+    importance: 8,
+    satisfaction: 3,
+    job_stage: 'confirm',
+    main_job_id: MAIN_JOB_ID,
+  },
+  {
+    title: 'Select entity structure for market entry',
+    description: 'Decide between EOR, subsidiary, or branch office',
+    level: 1,
+    parent_id: null,
+    icp: 'head_of_legal',
+    job_type: 'functional',
+    notes: '',
+    importance: 9,
+    satisfaction: 4,
+    job_stage: 'confirm',
+    main_job_id: MAIN_JOB_ID,
+  },
+  // Phase 2: During - Execute
+  {
+    title: 'Execute employee onboarding across time zones',
+    description: 'Implement remote onboarding program for new international hires',
+    level: 2,
+    parent_id: null,
+    icp: 'hr_manager',
+    job_type: 'functional',
+    notes: '',
+    importance: 9,
+    satisfaction: 2,
+    job_stage: 'execute',
+    main_job_id: MAIN_JOB_ID,
+  },
+  {
+    title: 'Screen candidates for cultural fit remotely',
+    description: 'Evaluate candidates for alignment with company values and culture',
+    level: 1,
+    parent_id: null,
+    icp: 'hiring_manager',
+    job_type: 'functional',
+    notes: '',
+    importance: 8,
+    satisfaction: 3,
+    job_stage: 'execute',
+    main_job_id: MAIN_JOB_ID,
+  },
+  {
+    title: 'Create compliant employment agreements for local hires',
+    description: 'Draft contracts meeting local labor law requirements',
+    level: 2,
+    parent_id: null,
+    icp: 'head_of_legal',
+    job_type: 'functional',
+    notes: '',
+    importance: 8,
+    satisfaction: 5,
+    job_stage: 'execute',
+    main_job_id: MAIN_JOB_ID,
+  },
+  // Phase 2: During - Monitor
+  {
+    title: 'Monitor payroll compliance in new jurisdiction',
+    description: 'Track and ensure ongoing payroll tax and reporting compliance',
+    level: 2,
+    parent_id: null,
+    icp: 'head_of_finance',
+    job_type: 'functional',
+    notes: '',
+    importance: 7,
+    satisfaction: 4,
+    job_stage: 'monitor',
+    main_job_id: MAIN_JOB_ID,
+  },
+  {
+    title: 'Avoid reputational risk in new market',
+    description: 'Ensure company actions align with local expectations and norms',
+    level: 1,
+    parent_id: null,
+    icp: 'head_of_legal',
     job_type: 'emotional',
     notes: '',
+    importance: 8,
+    satisfaction: 5,
+    job_stage: 'monitor',
+    main_job_id: MAIN_JOB_ID,
   },
+  // Phase 2: During - Modify
   {
-    title: 'Align with local culture',
-    description: 'Social consideration for team integration',
+    title: 'Modify employment contracts for local requirements',
+    description: 'Adjust contracts based on regulatory changes or feedback',
+    level: 2,
+    parent_id: null,
+    icp: 'head_of_legal',
+    job_type: 'functional',
+    notes: '',
+    importance: 6,
+    satisfaction: 6,
+    job_stage: 'modify',
+    main_job_id: MAIN_JOB_ID,
+  },
+  // Phase 3: After - Conclude
+  {
+    title: 'Conclude visa processing for new hires',
+    description: 'Complete all immigration documentation and approvals',
+    level: 2,
+    parent_id: null,
+    icp: 'hr_manager',
+    job_type: 'functional',
+    notes: '',
+    importance: 5,
+    satisfaction: 7,
+    job_stage: 'conclude',
+    main_job_id: MAIN_JOB_ID,
+  },
+  // Phase 3: After - Follow up
+  {
+    title: 'Follow up on employee integration progress',
+    description: 'Track new hire satisfaction and team integration metrics',
     level: 1,
     parent_id: null,
-    owner_role: 'People Ops',
+    icp: 'hiring_manager',
+    job_type: 'functional',
+    notes: '',
+    importance: 6,
+    satisfaction: 5,
+    job_stage: 'follow_up',
+    main_job_id: MAIN_JOB_ID,
+  },
+  {
+    title: 'Demonstrate company values to local hires',
+    description: 'Reinforce culture and values through ongoing communication',
+    level: 1,
+    parent_id: null,
+    icp: 'ceo',
     job_type: 'social',
     notes: '',
+    importance: 6,
+    satisfaction: 5,
+    job_stage: 'follow_up',
+    main_job_id: MAIN_JOB_ID,
   },
+  // Emotional Jobs
   {
-    title: 'Set up payroll infrastructure',
-    description: 'Establish payment processing',
-    level: 2,
-    parent_id: null,
-    owner_role: 'Finance',
-    job_type: 'functional',
-    notes: '',
-  },
-  {
-    title: 'Choose EOR vs subsidiary',
-    description: 'Decide on legal entity structure',
+    title: 'Feel confident about regulatory compliance',
+    description: 'Achieve peace of mind that all legal requirements are met',
     level: 1,
     parent_id: null,
-    owner_role: 'Legal',
-    job_type: 'functional',
+    icp: 'ceo',
+    job_type: 'emotional',
     notes: '',
+    importance: 9,
+    satisfaction: 2,
+    job_stage: 'confirm',
+    main_job_id: MAIN_JOB_ID,
   },
+  // Social Jobs
   {
-    title: 'Draft employment contracts',
-    description: 'Create legally compliant contracts',
-    level: 2,
+    title: 'Build trust with new international team',
+    description: 'Establish strong working relationships across cultures',
+    level: 1,
     parent_id: null,
-    owner_role: 'Legal',
-    job_type: 'functional',
+    icp: 'hr_manager',
+    job_type: 'social',
     notes: '',
+    importance: 7,
+    satisfaction: 4,
+    job_stage: 'execute',
+    main_job_id: MAIN_JOB_ID,
   },
 ];
 
@@ -99,52 +284,79 @@ export function generateSampleEdges(jobs: Job[]): Omit<Edge, 'id'>[] {
   
   const edges: Omit<Edge, 'id'>[] = [];
   
-  const mainDecision = findJob('Decide whether');
-  const legalConstraints = findJob('legal constraints');
-  const taxImplications = findJob('tax implications');
-  const hiringCosts = findJob('hiring costs');
-  const talentMarket = findJob('talent market');
-  const confidence = findJob('confident');
-  const culture = findJob('culture');
-  const payroll = findJob('payroll');
-  const eorVsSub = findJob('EOR vs');
-  const contracts = findJob('contracts');
+  const mainJob = findJob('Expand workforce');
+  const defineGoals = findJob('Define expansion goals');
+  const identifyCompliance = findJob('Identify compliance requirements');
+  const locateCounsel = findJob('Locate qualified legal counsel');
+  const assessTalent = findJob('Assess talent availability');
+  const prepareCompliance = findJob('Prepare compliance documentation');
+  const calculateCosts = findJob('Calculate employment costs');
+  const confirmBudget = findJob('Confirm budget allocation');
+  const selectEntity = findJob('Select entity structure');
+  const executeOnboarding = findJob('Execute employee onboarding');
+  const screenCandidates = findJob('Screen candidates');
+  const createAgreements = findJob('Create compliant employment agreements');
+  const feelConfident = findJob('Feel confident about regulatory');
+  const buildTrust = findJob('Build trust with new international');
   
-  if (legalConstraints && mainDecision) {
-    edges.push({ source_id: legalConstraints.id, target_id: mainDecision.id, relation_type: 'enables', weight: 1, notes: '' });
+  // Define → Main Job
+  if (defineGoals && mainJob) {
+    edges.push({ source_id: defineGoals.id, target_id: mainJob.id, relation_type: 'enables', weight: 1, notes: '' });
   }
-  if (taxImplications && mainDecision) {
-    edges.push({ source_id: taxImplications.id, target_id: mainDecision.id, relation_type: 'enables', weight: 1, notes: '' });
+  
+  // Identify Compliance → Define Goals
+  if (identifyCompliance && defineGoals) {
+    edges.push({ source_id: identifyCompliance.id, target_id: defineGoals.id, relation_type: 'enables', weight: 1, notes: '' });
   }
-  if (hiringCosts && mainDecision) {
-    edges.push({ source_id: hiringCosts.id, target_id: mainDecision.id, relation_type: 'enables', weight: 1, notes: '' });
+  
+  // Identify Compliance → Locate Counsel
+  if (identifyCompliance && locateCounsel) {
+    edges.push({ source_id: identifyCompliance.id, target_id: locateCounsel.id, relation_type: 'precedes', weight: 1, notes: '' });
   }
-  if (talentMarket && mainDecision) {
-    edges.push({ source_id: talentMarket.id, target_id: mainDecision.id, relation_type: 'enables', weight: 1, notes: '' });
+  
+  // Locate Counsel → Prepare Compliance
+  if (locateCounsel && prepareCompliance) {
+    edges.push({ source_id: locateCounsel.id, target_id: prepareCompliance.id, relation_type: 'enables', weight: 1, notes: '' });
   }
-  if (legalConstraints && confidence) {
-    edges.push({ source_id: legalConstraints.id, target_id: confidence.id, relation_type: 'influences', weight: 1, notes: '' });
+  
+  // Assess Talent → Screen Candidates
+  if (assessTalent && screenCandidates) {
+    edges.push({ source_id: assessTalent.id, target_id: screenCandidates.id, relation_type: 'precedes', weight: 1, notes: '' });
   }
-  if (confidence && mainDecision) {
-    edges.push({ source_id: confidence.id, target_id: mainDecision.id, relation_type: 'influences', weight: 0.8, notes: '' });
+  
+  // Calculate Costs → Confirm Budget
+  if (calculateCosts && confirmBudget) {
+    edges.push({ source_id: calculateCosts.id, target_id: confirmBudget.id, relation_type: 'enables', weight: 1, notes: '' });
   }
-  if (culture && talentMarket) {
-    edges.push({ source_id: culture.id, target_id: talentMarket.id, relation_type: 'influences', weight: 0.7, notes: '' });
+  
+  // Select Entity → Calculate Costs
+  if (selectEntity && calculateCosts) {
+    edges.push({ source_id: selectEntity.id, target_id: calculateCosts.id, relation_type: 'enables', weight: 1, notes: '' });
   }
-  if (legalConstraints && eorVsSub) {
-    edges.push({ source_id: legalConstraints.id, target_id: eorVsSub.id, relation_type: 'precedes', weight: 1, notes: '' });
+  
+  // Confirm Budget → Execute Onboarding
+  if (confirmBudget && executeOnboarding) {
+    edges.push({ source_id: confirmBudget.id, target_id: executeOnboarding.id, relation_type: 'precedes', weight: 1, notes: '' });
   }
-  if (eorVsSub && contracts) {
-    edges.push({ source_id: eorVsSub.id, target_id: contracts.id, relation_type: 'precedes', weight: 1, notes: '' });
+  
+  // Create Agreements → Execute Onboarding
+  if (createAgreements && executeOnboarding) {
+    edges.push({ source_id: createAgreements.id, target_id: executeOnboarding.id, relation_type: 'enables', weight: 1, notes: '' });
   }
-  if (taxImplications && payroll) {
-    edges.push({ source_id: taxImplications.id, target_id: payroll.id, relation_type: 'precedes', weight: 1, notes: '' });
+  
+  // Identify Compliance → Feel Confident
+  if (identifyCompliance && feelConfident) {
+    edges.push({ source_id: identifyCompliance.id, target_id: feelConfident.id, relation_type: 'influences', weight: 0.8, notes: '' });
   }
-  if (contracts && payroll) {
-    edges.push({ source_id: contracts.id, target_id: payroll.id, relation_type: 'precedes', weight: 1, notes: '' });
+  
+  // Execute Onboarding → Build Trust
+  if (executeOnboarding && buildTrust) {
+    edges.push({ source_id: executeOnboarding.id, target_id: buildTrust.id, relation_type: 'influences', weight: 0.7, notes: '' });
   }
-  if (eorVsSub && hiringCosts) {
-    edges.push({ source_id: eorVsSub.id, target_id: hiringCosts.id, relation_type: 'enables', weight: 1, notes: '' });
+  
+  // Feel Confident → Main Job
+  if (feelConfident && mainJob) {
+    edges.push({ source_id: feelConfident.id, target_id: mainJob.id, relation_type: 'influences', weight: 0.8, notes: '' });
   }
   
   return edges;

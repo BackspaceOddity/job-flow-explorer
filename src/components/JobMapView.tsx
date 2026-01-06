@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { JobType, JobStage } from '@/types/graph';
 import { JOB_STAGE_CONFIG, PHASES } from '@/lib/opportunityScoring';
 import { JobTypeBadge } from '@/components/JobTypeBadge';
+import { ICPBadge } from '@/components/ICPBadge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +24,7 @@ const JOB_TYPE_COLORS: Record<JobType, string> = {
 };
 
 export function JobMapView({ className }: JobMapViewProps) {
-  const { state, setSelectedNode, setFilters } = useGraph();
+  const { state, setSelectedNode, setSelectedMainJob } = useGraph();
   const { selectedMainJobId } = state.viewState;
   
   // Get main jobs (level 0 or jobs without main_job_id that could be main jobs)
@@ -56,7 +57,7 @@ export function JobMapView({ className }: JobMapViewProps) {
           <span className="text-sm text-muted-foreground">Main Job:</span>
           <Select
             value={selectedMainJobId || 'none'}
-            onValueChange={(value) => setFilters({ searchQuery: '' })}
+            onValueChange={(value) => setSelectedMainJob(value === 'none' ? null : value)}
           >
             <SelectTrigger className="w-64">
               <SelectValue placeholder="Select a main job to map" />
@@ -92,8 +93,9 @@ export function JobMapView({ className }: JobMapViewProps) {
             {/* Main Job Header */}
             {selectedMainJob && (
               <div className="mb-6 p-4 rounded-lg bg-primary/10 border border-primary/20">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <JobTypeBadge type={selectedMainJob.job_type} size="sm" />
+                  <ICPBadge icp={selectedMainJob.icp} size="sm" />
                   {selectedMainJob.importance !== null && selectedMainJob.satisfaction !== null && (
                     <Badge variant={isUnderserved(selectedMainJob.importance, selectedMainJob.satisfaction) ? 'default' : 'secondary'}>
                       Score: {computeOpportunityScore(selectedMainJob.importance, selectedMainJob.satisfaction)}
