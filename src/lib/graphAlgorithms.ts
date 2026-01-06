@@ -541,6 +541,7 @@ export function computeGraphMetrics(jobs: Job[], edges: Edge[]): GraphMetrics {
       sccs: [],
       cycles: [],
       topTensionNodes: [],
+      topUnderservedNodes: [],
     };
   }
   
@@ -613,6 +614,7 @@ export function computeGraphMetrics(jobs: Job[], edges: Edge[]): GraphMetrics {
     sccs: sccs.filter(scc => scc.length > 1),
     cycles,
     topTensionNodes: sortedByTension,
+    topUnderservedNodes: [], // Populated by context with opportunity scoring
   };
 }
 

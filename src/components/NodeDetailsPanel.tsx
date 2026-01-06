@@ -1,12 +1,14 @@
 import React from 'react';
 import { useGraph } from '@/context/GraphContext';
 import { cn } from '@/lib/utils';
-import { X, ExternalLink, Edit2, Trash2 } from 'lucide-react';
+import { X, ExternalLink, Edit2, Trash2, Map } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { JobTypeBadge, LevelBadge } from '@/components/JobTypeBadge';
-import { NodeMetricsDisplay } from '@/components/MetricDisplay';
+import { NodeMetricsDisplay, OpportunityMetricsDisplay } from '@/components/MetricDisplay';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { JOB_STAGE_CONFIG } from '@/lib/opportunityScoring';
 
 interface NodeDetailsPanelProps {
   onEdit: (jobId: string) => void;
@@ -40,6 +42,9 @@ export function NodeDetailsPanel({ onEdit, className }: NodeDetailsPanelProps) {
   const incomingJobs = incomingEdges.map(e => state.jobs.find(j => j.id === e.source_id)).filter(Boolean);
   const outgoingJobs = outgoingEdges.map(e => state.jobs.find(j => j.id === e.target_id)).filter(Boolean);
   
+  // Find main job if this is a sub-job
+  const mainJob = job.main_job_id ? state.jobs.find(j => j.id === job.main_job_id) : null;
+  
   const handleExploreSubgraph = () => {
     setSubgraph({ enabled: true, centerId: selectedNodeId, hops: 2 });
   };
@@ -56,9 +61,15 @@ export function NodeDetailsPanel({ onEdit, className }: NodeDetailsPanelProps) {
         {/* Header */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
               <JobTypeBadge type={job.job_type} size="sm" />
               <LevelBadge level={job.level} />
+              {job.job_stage && (
+                <Badge variant="outline" className="text-xs">
+                  <Map className="w-3 h-3 mr-1" />
+                  {JOB_STAGE_CONFIG[job.job_stage].label}
+                </Badge>
+              )}
             </div>
             <h3 className="font-semibold text-foreground leading-tight">{job.title}</h3>
             <p className="text-xs font-mono text-muted-foreground mt-1">{job.id}</p>
@@ -81,6 +92,19 @@ export function NodeDetailsPanel({ onEdit, className }: NodeDetailsPanelProps) {
           </div>
         )}
         
+        {/* Main Job Reference */}
+        {mainJob && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Main Job:</span>
+            <button
+              className="text-sm font-medium text-primary hover:underline"
+              onClick={() => setSelectedNode(mainJob.id)}
+            >
+              {mainJob.title}
+            </button>
+          </div>
+        )}
+        
         {/* Actions */}
         <div className="flex gap-2">
           <Button variant="secondary" size="sm" className="flex-1" onClick={() => onEdit(job.id)}>
@@ -98,7 +122,12 @@ export function NodeDetailsPanel({ onEdit, className }: NodeDetailsPanelProps) {
         
         <Separator />
         
-        {/* Metrics */}
+        {/* Opportunity Metrics */}
+        <OpportunityMetricsDisplay job={job} />
+        
+        <Separator />
+        
+        {/* Graph Metrics */}
         {metrics && <NodeMetricsDisplay metrics={metrics} />}
         
         <Separator />
