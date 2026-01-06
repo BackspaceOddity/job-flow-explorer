@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGraph } from '@/context/GraphContext';
-import { Job, JobType, JobStage } from '@/types/graph';
+import { Job, JobType, JobStage, ICP, ICP_OPTIONS } from '@/types/graph';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,7 +30,7 @@ export function JobFormDialog({ open, onOpenChange, editingJobId }: JobFormDialo
     description: editingJob?.description || '',
     level: editingJob?.level ?? 0,
     parent_id: editingJob?.parent_id || null,
-    owner_role: editingJob?.owner_role || '',
+    icp: editingJob?.icp || 'ceo',
     job_type: editingJob?.job_type || 'functional',
     notes: editingJob?.notes || '',
     importance: editingJob?.importance ?? null,
@@ -48,7 +48,7 @@ export function JobFormDialog({ open, onOpenChange, editingJobId }: JobFormDialo
           description: editingJob.description,
           level: editingJob.level,
           parent_id: editingJob.parent_id,
-          owner_role: editingJob.owner_role,
+          icp: editingJob.icp,
           job_type: editingJob.job_type,
           notes: editingJob.notes,
           importance: editingJob.importance,
@@ -62,7 +62,7 @@ export function JobFormDialog({ open, onOpenChange, editingJobId }: JobFormDialo
           description: '',
           level: 0,
           parent_id: null,
-          owner_role: '',
+          icp: 'ceo',
           job_type: 'functional',
           notes: '',
           importance: null,
@@ -107,12 +107,12 @@ export function JobFormDialog({ open, onOpenChange, editingJobId }: JobFormDialo
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Title *</Label>
+            <Label htmlFor="title">Title * (Verb + Object + Contextual Clarifier)</Label>
             <Input
               id="title"
               value={formData.title}
               onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
-              placeholder="e.g., Gather legal constraints"
+              placeholder="e.g., Identify compliance requirements for target jurisdiction"
               required
             />
           </div>
@@ -169,13 +169,22 @@ export function JobFormDialog({ open, onOpenChange, editingJobId }: JobFormDialo
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="owner_role">Owner Role</Label>
-              <Input
-                id="owner_role"
-                value={formData.owner_role}
-                onChange={e => setFormData(prev => ({ ...prev, owner_role: e.target.value }))}
-                placeholder="e.g., HR, Finance, Founder"
-              />
+              <Label htmlFor="icp">ICP (Ideal Customer Profile)</Label>
+              <Select
+                value={formData.icp}
+                onValueChange={(value: ICP) => setFormData(prev => ({ ...prev, icp: value }))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {ICP_OPTIONS.map(option => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             
             <div className="space-y-2">

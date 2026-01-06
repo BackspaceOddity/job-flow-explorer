@@ -23,8 +23,8 @@ export function OpportunityMatrix({ className, onJobSelect }: OpportunityMatrixP
   };
   
   // Grid is 10x10, with (0,0) at bottom-left
-  // X-axis: Satisfaction (1-10, left to right)
-  // Y-axis: Importance (1-10, bottom to top)
+  // X-axis: Importance (1-10, left to right)
+  // Y-axis: Satisfaction (1-10, bottom to top)
   
   return (
     <div className={cn('flex flex-col h-full', className)}>
@@ -39,24 +39,25 @@ export function OpportunityMatrix({ className, onJobSelect }: OpportunityMatrixP
       {/* Matrix */}
       <div className="flex-1 p-4 overflow-auto">
         <div className="relative w-full aspect-square max-w-[600px] mx-auto">
-          {/* Background quadrants */}
+          {/* Background quadrants - Updated for new axes */}
+          {/* X = Importance (left low, right high), Y = Satisfaction (bottom low, top high) */}
           <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
-            {/* Top-left: Opportunity Zone (high I, low S) */}
-            <div className={cn('border-r border-b border-border/50', QUADRANT_CONFIG.opportunity.bgClass)} />
-            {/* Top-right: Appropriately Served (high I, high S) */}
+            {/* Top-left: Low I, High S = Over-served */}
+            <div className={cn('border-r border-b border-border/50', QUADRANT_CONFIG.over_served.bgClass)} />
+            {/* Top-right: High I, High S = Appropriately Served */}
             <div className={cn('border-b border-border/50', QUADRANT_CONFIG.appropriately_served.bgClass)} />
-            {/* Bottom-left: Don't Invest (low I, low S) */}
+            {/* Bottom-left: Low I, Low S = Don't Invest */}
             <div className={cn('border-r border-border/50', QUADRANT_CONFIG.dont_invest.bgClass)} />
-            {/* Bottom-right: Over-served (low I, high S) */}
-            <div className={QUADRANT_CONFIG.over_served.bgClass} />
+            {/* Bottom-right: High I, Low S = Opportunity Zone */}
+            <div className={QUADRANT_CONFIG.opportunity.bgClass} />
           </div>
           
           {/* Axis labels */}
           <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-muted-foreground">
-            Satisfaction →
+            Importance →
           </div>
           <div className="absolute -left-6 top-1/2 -translate-y-1/2 -rotate-90 text-xs text-muted-foreground">
-            Importance →
+            Satisfaction →
           </div>
           
           {/* Grid lines */}
@@ -81,10 +82,11 @@ export function OpportunityMatrix({ className, onJobSelect }: OpportunityMatrixP
           <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-border" />
           <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-border" />
           
-          {/* Job dots */}
+          {/* Job dots - Updated mapping */}
           {scoredJobs.map(job => {
-            const x = ((job.satisfaction! - 1) / 9) * 100; // 1-10 mapped to 0-100%
-            const y = 100 - ((job.importance! - 1) / 9) * 100; // Inverted for CSS
+            // X = Importance (1-10 → 0-100%), Y = Satisfaction (inverted: 10 at top, 1 at bottom)
+            const x = ((job.importance! - 1) / 9) * 100;
+            const y = 100 - ((job.satisfaction! - 1) / 9) * 100;
             const quadrant = getQuadrant(job.importance, job.satisfaction);
             const score = computeOpportunityScore(job.importance, job.satisfaction);
             const isSelected = state.viewState.selectedNodeId === job.id;
@@ -119,9 +121,9 @@ export function OpportunityMatrix({ className, onJobSelect }: OpportunityMatrixP
             );
           })}
           
-          {/* Corner labels */}
-          <div className="absolute top-2 left-2 text-[10px] text-green-500 font-medium">
-            Opportunity
+          {/* Corner labels - Updated for new quadrant positions */}
+          <div className="absolute top-2 left-2 text-[10px] text-red-500 font-medium">
+            Over-served
           </div>
           <div className="absolute top-2 right-2 text-[10px] text-yellow-500 font-medium">
             Served
@@ -129,8 +131,8 @@ export function OpportunityMatrix({ className, onJobSelect }: OpportunityMatrixP
           <div className="absolute bottom-2 left-2 text-[10px] text-muted-foreground font-medium">
             Don't Invest
           </div>
-          <div className="absolute bottom-2 right-2 text-[10px] text-red-500 font-medium">
-            Over-served
+          <div className="absolute bottom-2 right-2 text-[10px] text-green-500 font-medium">
+            Opportunity
           </div>
         </div>
       </div>

@@ -2,6 +2,8 @@
 
 export type JobType = 'functional' | 'emotional' | 'social' | 'other';
 
+export type ICP = 'ceo' | 'hr_manager' | 'head_of_finance' | 'hiring_manager' | 'head_of_legal';
+
 export type RelationType = 'depends_on' | 'enables' | 'precedes' | 'influences';
 
 export type DirectionMode = 'before' | 'depends'; // A→B: "A before B" or "B depends on A"
@@ -13,13 +15,21 @@ export type JobStage =
 
 export type ActiveView = 'graph' | 'jobmap' | 'matrix';
 
+export const ICP_OPTIONS: { value: ICP; label: string }[] = [
+  { value: 'ceo', label: 'CEO' },
+  { value: 'hr_manager', label: 'HR Manager' },
+  { value: 'head_of_finance', label: 'Head of Finance' },
+  { value: 'hiring_manager', label: 'Hiring Manager' },
+  { value: 'head_of_legal', label: 'Head of Legal' },
+];
+
 export interface Job {
   id: string;
   title: string;
   description: string;
   level: number;
   parent_id: string | null;
-  owner_role: string;
+  icp: ICP;
   job_type: JobType;
   notes: string;
   // Underserved JTBD fields
@@ -74,7 +84,7 @@ export interface GraphMetrics {
 }
 
 export interface GraphFilters {
-  ownerRoles: string[];
+  icps: ICP[];
   jobTypes: JobType[];
   levels: number[];
   searchQuery: string;
@@ -107,7 +117,7 @@ export interface ImportData {
     description?: string;
     level: number;
     parent_id: string | null;
-    owner_role?: string;
+    icp?: ICP;
     job_type: JobType;
     notes?: string;
     importance?: number | null;

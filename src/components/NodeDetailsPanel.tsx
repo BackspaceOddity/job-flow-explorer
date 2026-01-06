@@ -4,6 +4,8 @@ import { cn } from '@/lib/utils';
 import { X, ExternalLink, Edit2, Trash2, Map } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { JobTypeBadge, LevelBadge } from '@/components/JobTypeBadge';
+import { ICPBadge } from '@/components/ICPBadge';
+import { QuickScoreEditor } from '@/components/QuickScoreEditor';
 import { NodeMetricsDisplay, OpportunityMetricsDisplay } from '@/components/MetricDisplay';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -16,7 +18,7 @@ interface NodeDetailsPanelProps {
 }
 
 export function NodeDetailsPanel({ onEdit, className }: NodeDetailsPanelProps) {
-  const { state, setSelectedNode, setSubgraph, deleteJob } = useGraph();
+  const { state, setSelectedNode, setSubgraph, deleteJob, updateJob } = useGraph();
   const { selectedNodeId } = state.viewState;
   
   if (!selectedNodeId) {
@@ -55,6 +57,14 @@ export function NodeDetailsPanel({ onEdit, className }: NodeDetailsPanelProps) {
     }
   };
   
+  const handleImportanceChange = (value: number) => {
+    updateJob(job.id, { importance: value });
+  };
+  
+  const handleSatisfactionChange = (value: number) => {
+    updateJob(job.id, { satisfaction: value });
+  };
+  
   return (
     <ScrollArea className={cn('h-full', className)}>
       <div className="p-4 space-y-4">
@@ -64,6 +74,7 @@ export function NodeDetailsPanel({ onEdit, className }: NodeDetailsPanelProps) {
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <JobTypeBadge type={job.job_type} size="sm" />
               <LevelBadge level={job.level} />
+              <ICPBadge icp={job.icp} size="sm" />
               {job.job_stage && (
                 <Badge variant="outline" className="text-xs">
                   <Map className="w-3 h-3 mr-1" />
@@ -82,14 +93,6 @@ export function NodeDetailsPanel({ onEdit, className }: NodeDetailsPanelProps) {
         {/* Description */}
         {job.description && (
           <p className="text-sm text-muted-foreground">{job.description}</p>
-        )}
-        
-        {/* Owner Role */}
-        {job.owner_role && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">Owner:</span>
-            <span className="text-sm font-medium">{job.owner_role}</span>
-          </div>
         )}
         
         {/* Main Job Reference */}
@@ -118,6 +121,20 @@ export function NodeDetailsPanel({ onEdit, className }: NodeDetailsPanelProps) {
           <Button variant="ghost" size="icon" className="shrink-0 text-destructive hover:text-destructive" onClick={handleDelete}>
             <Trash2 className="w-4 h-4" />
           </Button>
+        </div>
+        
+        <Separator />
+        
+        {/* Quick I×S Score Editor */}
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium text-muted-foreground">Quick I×S Scoring</h4>
+          <QuickScoreEditor
+            importance={job.importance}
+            satisfaction={job.satisfaction}
+            onImportanceChange={handleImportanceChange}
+            onSatisfactionChange={handleSatisfactionChange}
+            compact
+          />
         </div>
         
         <Separator />
