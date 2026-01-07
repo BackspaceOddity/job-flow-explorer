@@ -23,9 +23,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { TrendingUp, AlertTriangle, Target, Zap, Heart, Users, Grid3X3, List, ChevronDown, ChevronRight } from 'lucide-react';
-
-type JobMapMode = 'canvas' | 'list';
+import { TrendingUp, AlertTriangle, Target, Zap, Heart, Users, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface JobMapViewProps {
   className?: string;
@@ -61,17 +59,19 @@ const CATEGORY_COLORS: Record<RowCategory, { bg: string; text: string }> = {
   social: { bg: 'bg-amber-600', text: 'text-white' },
 };
 
-// List View Component
-function JobListView({ 
+// List View Component - exported for use in top-level navigation
+export function JobListView({ 
   jobs, 
   l0Jobs, 
   selectedNodeId, 
-  onSelectJob 
+  onSelectJob,
+  className 
 }: { 
   jobs: Job[]; 
   l0Jobs: Job[];
   selectedNodeId: string | null;
   onSelectJob: (id: string) => void;
+  className?: string;
 }) {
   const [expandedJobs, setExpandedJobs] = useState<Set<string>>(new Set(l0Jobs.map(j => j.id)));
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
@@ -118,7 +118,7 @@ function JobListView({
   };
   
   return (
-    <div className="space-y-2">
+    <div className={cn("space-y-2 p-4", className)}>
       {l0Jobs.map(mainJob => {
         const subJobs = getSortedJobs(jobsByMainJob.get(mainJob.id) || []);
         const isExpanded = expandedJobs.has(mainJob.id);
@@ -262,7 +262,6 @@ function JobListView({
 export function JobMapView({ className }: JobMapViewProps) {
   const { state, setSelectedNode, setSelectedMainJob, filteredData } = useGraph();
   const { filters, selectedMainJobId } = state.viewState;
-  const [viewMode, setViewMode] = useState<JobMapMode>('canvas');
   
   // Filter jobs by selected ICP from sidebar
   const selectedICP: ICP | null = filters.icps.length === 1 ? filters.icps[0] : null;
@@ -326,52 +325,28 @@ export function JobMapView({ className }: JobMapViewProps) {
           <div>
             <h2 className="font-semibold text-foreground">JTBD Canvas</h2>
             <p className="text-xs text-muted-foreground mt-1">
-              {viewMode === 'canvas' ? 'Universal Job Map: 9 stages across 3 phases' : 'All jobs grouped by Main Job'}
+              Universal Job Map: 9 stages across 3 phases
             </p>
           </div>
           
           <div className="flex items-center gap-3">
-            {/* View Mode Toggle */}
-            <div className="flex items-center border border-border rounded-md">
-              <Button
-                variant={viewMode === 'canvas' ? 'default' : 'ghost'}
-                size="sm"
-                className="h-8 px-3 rounded-r-none"
-                onClick={() => setViewMode('canvas')}
-              >
-                <Grid3X3 className="w-4 h-4 mr-1.5" />
-                Canvas
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'ghost'}
-                size="sm"
-                className="h-8 px-3 rounded-l-none border-l border-border"
-                onClick={() => setViewMode('list')}
-              >
-                <List className="w-4 h-4 mr-1.5" />
-                List
-              </Button>
-            </div>
-            
-            {/* Main Job Selector - only show in canvas mode */}
-            {viewMode === 'canvas' && (
-              <Select 
-                value={selectedMainJobId || 'all'} 
-                onValueChange={(val) => setSelectedMainJob(val === 'all' ? null : val)}
-              >
-                <SelectTrigger className="w-[280px] bg-background">
-                  <SelectValue placeholder="Select Main Job..." />
-                </SelectTrigger>
-                <SelectContent className="bg-popover z-50">
-                  <SelectItem value="all">All Main Jobs</SelectItem>
-                  {l0Jobs.map(job => (
-                    <SelectItem key={job.id} value={job.id}>
-                      {job.title.length > 40 ? job.title.slice(0, 40) + '...' : job.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            {/* Main Job Selector */}
+            <Select 
+              value={selectedMainJobId || 'all'} 
+              onValueChange={(val) => setSelectedMainJob(val === 'all' ? null : val)}
+            >
+              <SelectTrigger className="w-[280px] bg-background">
+                <SelectValue placeholder="Select Main Job..." />
+              </SelectTrigger>
+              <SelectContent className="bg-popover z-50">
+                <SelectItem value="all">All Main Jobs</SelectItem>
+                {l0Jobs.map(job => (
+                  <SelectItem key={job.id} value={job.id}>
+                    {job.title.length > 40 ? job.title.slice(0, 40) + '...' : job.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             
             {selectedICP && (
               <div className="flex items-center gap-2">
@@ -384,20 +359,7 @@ export function JobMapView({ className }: JobMapViewProps) {
       </div>
       
       <div className="flex-1 overflow-auto min-h-0 max-h-full">
-        {/* List View */}
-        {viewMode === 'list' && (
-          <div className="p-4 pb-8">
-            <JobListView 
-              jobs={filteredJobs} 
-              l0Jobs={l0Jobs.filter(j => !selectedMainJobId || j.id === selectedMainJobId)}
-              selectedNodeId={state.viewState.selectedNodeId}
-              onSelectJob={setSelectedNode}
-            />
-          </div>
-        )}
-        
         {/* Canvas View */}
-        {viewMode === 'canvas' && (
         <div className="p-4 pb-8">
           {/* Job Map Grid */}
           <div className="overflow-x-auto">
@@ -569,7 +531,6 @@ export function JobMapView({ className }: JobMapViewProps) {
             </div>
           )}
         </div>
-        )}
       </div>
     </div>
   );

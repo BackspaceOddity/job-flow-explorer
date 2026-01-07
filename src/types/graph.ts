@@ -13,7 +13,7 @@ export type JobStage =
   | 'execute' | 'monitor' | 'modify'              // Phase 2: During
   | 'conclude' | 'follow_up';                     // Phase 3: After
 
-export type ActiveView = 'graph' | 'jobmap' | 'matrix';
+export type ActiveView = 'list' | 'graph' | 'jobmap' | 'matrix';
 
 export const ICP_OPTIONS: { value: ICP; label: string }[] = [
   { value: 'ceo', label: 'CEO' },
