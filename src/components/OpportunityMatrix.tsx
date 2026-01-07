@@ -4,6 +4,16 @@ import { cn } from '@/lib/utils';
 import { computeOpportunityScore, getQuadrant, QUADRANT_CONFIG } from '@/lib/opportunityScoring';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
+// Deterministic hash for consistent jitter per job
+const hashCode = (str: string): number => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash;
+};
+
 interface OpportunityMatrixProps {
   className?: string;
   onJobSelect?: (jobId: string) => void;
@@ -38,7 +48,7 @@ export function OpportunityMatrix({ className, onJobSelect }: OpportunityMatrixP
       
       {/* Matrix */}
       <div className="flex-1 p-4 overflow-auto">
-        <div className="relative w-full aspect-square max-w-[600px] mx-auto">
+        <div className="relative w-full aspect-square max-w-[800px] mx-auto">
           {/* Background quadrants - Updated for new axes */}
           {/* X = Importance (left low, right high), Y = Satisfaction (bottom low, top high) */}
           <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
@@ -82,21 +92,32 @@ export function OpportunityMatrix({ className, onJobSelect }: OpportunityMatrixP
           <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-border" />
           <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-border" />
           
-          {/* Job dots - Updated mapping */}
+          {/* Job dots - Updated mapping with natural jitter */}
           {scoredJobs.map(job => {
+            // Add deterministic jitter based on job ID for natural scatter
+            const jitterX = ((hashCode(job.id) % 100) - 50) / 100 * 5; // ±5% jitter
+            const jitterY = ((hashCode(job.id + 'y') % 100) - 50) / 100 * 5;
+            
             // X = Importance (1-10 → 0-100%), Y = Satisfaction (inverted: 10 at top, 1 at bottom)
-            const x = ((job.importance! - 1) / 9) * 100;
-            const y = 100 - ((job.satisfaction! - 1) / 9) * 100;
+            const baseX = ((job.importance! - 1) / 9) * 100;
+            const baseY = 100 - ((job.satisfaction! - 1) / 9) * 100;
+            const x = Math.max(2, Math.min(98, baseX + jitterX));
+            const y = Math.max(2, Math.min(98, baseY + jitterY));
+            
             const quadrant = getQuadrant(job.importance, job.satisfaction);
             const score = computeOpportunityScore(job.importance, job.satisfaction);
             const isSelected = state.viewState.selectedNodeId === job.id;
+            
+            // Dynamic dot size based on total count
+            const dotSize = scoredJobs.length > 100 ? 'w-3 h-3' : 'w-4 h-4';
             
             return (
               <Tooltip key={job.id}>
                 <TooltipTrigger asChild>
                   <button
                     className={cn(
-                      'absolute w-4 h-4 rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-all',
+                      'absolute rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-all',
+                      dotSize,
                       'border-2 hover:scale-150 hover:z-10',
                       isSelected && 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-150 z-10',
                       quadrant === 'opportunity' && 'bg-green-500 border-green-300',

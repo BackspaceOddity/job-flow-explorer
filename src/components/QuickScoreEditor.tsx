@@ -57,7 +57,7 @@ export function QuickScoreEditor({
       </div>
 
       {/* Importance slider */}
-      <div className="space-y-1">
+      <div className="space-y-1 overflow-hidden">
         <div className="flex items-center justify-between">
           <span className={cn('text-muted-foreground', compact ? 'text-[10px]' : 'text-xs')}>
             Importance
@@ -72,7 +72,7 @@ export function QuickScoreEditor({
           min={1}
           max={10}
           step={1}
-          className="w-full"
+          className="w-full max-w-full"
         />
         {!compact && (
           <div className="flex justify-between text-[10px] text-muted-foreground">
@@ -83,7 +83,7 @@ export function QuickScoreEditor({
       </div>
 
       {/* Satisfaction slider */}
-      <div className="space-y-1">
+      <div className="space-y-1 overflow-hidden">
         <div className="flex items-center justify-between">
           <span className={cn('text-muted-foreground', compact ? 'text-[10px]' : 'text-xs')}>
             Satisfaction
@@ -98,7 +98,7 @@ export function QuickScoreEditor({
           min={1}
           max={10}
           step={1}
-          className="w-full"
+          className="w-full max-w-full"
         />
         {!compact && (
           <div className="flex justify-between text-[10px] text-muted-foreground">

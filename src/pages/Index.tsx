@@ -173,49 +173,52 @@ function GraphApp() {
             <>
               <GraphVisualization />
               
-              {/* Top Tension Nodes Overlay */}
-              {topTension.length > 0 && (
-                <div className="absolute top-4 left-4 p-3 rounded-lg bg-card/90 backdrop-blur border border-border max-w-xs">
-                  <h3 className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
-                    <Target className="w-3.5 h-3.5" /> Top Tension Points
-                  </h3>
-                  <div className="space-y-1">
-                    {topTension.map((id, i) => {
-                      const job = state.jobs.find(j => j.id === id);
-                      const score = state.metrics?.nodes.get(id)?.tensionScore || 0;
-                      return job ? (
-                        <div key={id} className="flex items-center gap-2 text-xs">
-                          <span className="font-mono text-muted-foreground">#{i + 1}</span>
-                          <span className="truncate flex-1">{job.title}</span>
-                          <span className="font-mono text-primary">{score.toFixed(1)}</span>
-                        </div>
-                      ) : null;
-                    })}
+              {/* Overlays Container - Stacked Vertically */}
+              <div className="absolute top-4 left-4 flex flex-col gap-3 z-10">
+                {/* Top Tension Nodes Overlay */}
+                {topTension.length > 0 && (
+                  <div className="p-3 rounded-lg bg-card/90 backdrop-blur border border-border max-w-xs">
+                    <h3 className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
+                      <Target className="w-3.5 h-3.5" /> Top Tension Points
+                    </h3>
+                    <div className="space-y-1">
+                      {topTension.map((id, i) => {
+                        const job = state.jobs.find(j => j.id === id);
+                        const score = state.metrics?.nodes.get(id)?.tensionScore || 0;
+                        return job ? (
+                          <div key={id} className="flex items-center gap-2 text-xs">
+                            <span className="font-mono text-muted-foreground">#{i + 1}</span>
+                            <span className="truncate flex-1">{job.title}</span>
+                            <span className="font-mono text-primary">{score.toFixed(1)}</span>
+                          </div>
+                        ) : null;
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
-              
-              {/* Top Underserved Overlay */}
-              {topUnderserved.length > 0 && (
-                <div className="absolute top-4 left-[280px] p-3 rounded-lg bg-card/90 backdrop-blur border border-border max-w-xs">
-                  <h3 className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
-                    <TrendingUp className="w-3.5 h-3.5 text-green-500" /> Top Underserved
-                  </h3>
-                  <div className="space-y-1">
-                    {topUnderserved.map((id, i) => {
-                      const job = state.jobs.find(j => j.id === id);
-                      const score = job ? computeOpportunityScore(job.importance, job.satisfaction) : 0;
-                      return job ? (
-                        <div key={id} className="flex items-center gap-2 text-xs">
-                          <span className="font-mono text-muted-foreground">#{i + 1}</span>
-                          <span className="truncate flex-1">{job.title}</span>
-                          <span className="font-mono text-green-500">{score}</span>
-                        </div>
-                      ) : null;
-                    })}
+                )}
+                
+                {/* Top Underserved Overlay */}
+                {topUnderserved.length > 0 && (
+                  <div className="p-3 rounded-lg bg-card/90 backdrop-blur border border-border max-w-xs">
+                    <h3 className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
+                      <TrendingUp className="w-3.5 h-3.5 text-green-500" /> Top Underserved
+                    </h3>
+                    <div className="space-y-1">
+                      {topUnderserved.map((id, i) => {
+                        const job = state.jobs.find(j => j.id === id);
+                        const score = job ? computeOpportunityScore(job.importance, job.satisfaction) : 0;
+                        return job ? (
+                          <div key={id} className="flex items-center gap-2 text-xs">
+                            <span className="font-mono text-muted-foreground">#{i + 1}</span>
+                            <span className="truncate flex-1">{job.title}</span>
+                            <span className="font-mono text-green-500">{score}</span>
+                          </div>
+                        ) : null;
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </>
           )}
           
