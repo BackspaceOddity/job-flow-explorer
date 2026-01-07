@@ -17,6 +17,7 @@ import type {
 } from '@/types/graph';
 import { computeGraphMetrics, getSubgraph } from '@/lib/graphAlgorithms';
 import { getTopUnderservedJobs } from '@/lib/opportunityScoring';
+import { sampleJobs, generateSampleEdges, resolveMainJobIds } from '@/data/sampleData';
 
 const STORAGE_KEY = 'jobs-graph-mapper-data';
 
@@ -321,7 +322,11 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
         }));
         dispatch({ type: 'LOAD_DATA', payload: { jobs: migratedJobs, edges: data.edges } });
       } else {
-        dispatch({ type: 'SET_LOADING', payload: false });
+        // Load sample data if no stored data
+        const jobsWithIds: Job[] = sampleJobs.map(job => ({ ...job, id: uuidv4() }));
+        const resolvedJobs = resolveMainJobIds(jobsWithIds);
+        const edges = generateSampleEdges(resolvedJobs).map(e => ({ ...e, id: uuidv4() }));
+        dispatch({ type: 'LOAD_DATA', payload: { jobs: resolvedJobs, edges } });
       }
     } catch (error) {
       console.error('Failed to load data from localStorage:', error);
