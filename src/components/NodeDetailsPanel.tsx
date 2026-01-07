@@ -18,7 +18,7 @@ interface NodeDetailsPanelProps {
 }
 
 export function NodeDetailsPanel({ onEdit, className }: NodeDetailsPanelProps) {
-  const { state, setSelectedNode, setSubgraph, deleteJob, updateJob } = useGraph();
+  const { state, setSelectedNode, setSubgraph, setActiveView, deleteJob, updateJob } = useGraph();
   const { selectedNodeId } = state.viewState;
   
   if (!selectedNodeId) {
@@ -48,6 +48,7 @@ export function NodeDetailsPanel({ onEdit, className }: NodeDetailsPanelProps) {
   const mainJob = job.main_job_id ? state.jobs.find(j => j.id === job.main_job_id) : null;
   
   const handleExploreSubgraph = () => {
+    setActiveView('graph');
     setSubgraph({ enabled: true, centerId: selectedNodeId, hops: 2 });
   };
   
