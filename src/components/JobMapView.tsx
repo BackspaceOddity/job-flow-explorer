@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { JobType, JobStage, ICP } from '@/types/graph';
 import { JOB_STAGE_CONFIG, PHASES, computeOpportunityScore, isUnderserved } from '@/lib/opportunityScoring';
 import { ICPBadge } from '@/components/ICPBadge';
-import { ScrollArea } from '@/components/ui/scroll-area';
+
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, AlertTriangle, Target, Zap, Heart, Users } from 'lucide-react';
 
@@ -13,18 +13,18 @@ interface JobMapViewProps {
 }
 
 // Row categories for the JTBD Canvas
-type RowCategory = 'stages' | 'outcomes' | 'barriers' | 'differentiators' | 'emotional' | 'social';
+type RowCategory = 'steps' | 'outcomes' | 'barriers' | 'differentiators' | 'emotional' | 'social';
 
 const ROW_CONFIG: Record<RowCategory, { label: string; icon: React.ReactNode; description: string }> = {
-  stages: { label: 'Stages / Steps', icon: <Target className="w-4 h-4" />, description: 'Core functional jobs per stage' },
+  steps: { label: 'Steps', icon: <Target className="w-4 h-4" />, description: 'Core functional jobs per stage (L1)' },
   outcomes: { label: 'Desired Outcomes', icon: <TrendingUp className="w-4 h-4" />, description: 'What they want to achieve' },
   barriers: { label: 'Barriers / Challenges', icon: <AlertTriangle className="w-4 h-4" />, description: 'Obstacles they face' },
-  differentiators: { label: 'Job Differentiators', icon: <Zap className="w-4 h-4" />, description: 'Contextual variations' },
+  differentiators: { label: 'Job Differentiators', icon: <Zap className="w-4 h-4" />, description: 'Contextual variations (L2+)' },
   emotional: { label: 'Emotional Aspects', icon: <Heart className="w-4 h-4" />, description: 'How they want to feel' },
   social: { label: 'Social Aspects', icon: <Users className="w-4 h-4" />, description: 'How they want to be perceived' },
 };
 
-const ROW_ORDER: RowCategory[] = ['stages', 'outcomes', 'barriers', 'differentiators', 'emotional', 'social'];
+const ROW_ORDER: RowCategory[] = ['steps', 'outcomes', 'barriers', 'differentiators', 'emotional', 'social'];
 
 const JOB_TYPE_COLORS: Record<JobType, string> = {
   functional: 'bg-[hsl(var(--job-functional))]',
@@ -49,31 +49,33 @@ export function JobMapView({ className }: JobMapViewProps) {
     const stageJobs = filteredJobs.filter(j => j.job_stage === stage);
     
     switch (category) {
-      case 'stages':
-        // Core functional jobs (level 1)
+      case 'steps':
+        // L1 functional jobs only (L0 jobs have no stage)
         return stageJobs.filter(j => j.job_type === 'functional' && j.level === 1);
       case 'outcomes':
-        // Jobs with "outcome" or goal-related keywords, or level 0 jobs
+        // Jobs with outcome/goal keywords (NOT L0 since they have no stage)
         return stageJobs.filter(j => 
           j.job_type === 'functional' && 
-          (j.level === 0 || j.description?.toLowerCase().includes('outcome') || j.description?.toLowerCase().includes('goal'))
+          j.level > 0 &&
+          (j.description?.toLowerCase().includes('outcome') || j.description?.toLowerCase().includes('goal'))
         );
       case 'barriers':
-        // Jobs mentioning barriers, challenges, or risks
+        // Jobs mentioning barriers, challenges, or risks (L1+)
         return stageJobs.filter(j => 
-          j.notes?.toLowerCase().includes('barrier') ||
-          j.notes?.toLowerCase().includes('challenge') ||
-          j.notes?.toLowerCase().includes('risk') ||
-          j.description?.toLowerCase().includes('avoid') ||
-          j.description?.toLowerCase().includes('prevent')
+          j.level > 0 &&
+          (j.notes?.toLowerCase().includes('barrier') ||
+           j.notes?.toLowerCase().includes('challenge') ||
+           j.notes?.toLowerCase().includes('risk') ||
+           j.description?.toLowerCase().includes('avoid') ||
+           j.description?.toLowerCase().includes('prevent'))
         );
       case 'differentiators':
-        // Sub-jobs (level > 1)
+        // L2+ functional jobs
         return stageJobs.filter(j => j.job_type === 'functional' && j.level > 1);
       case 'emotional':
-        return stageJobs.filter(j => j.job_type === 'emotional');
+        return stageJobs.filter(j => j.job_type === 'emotional' && j.level > 0);
       case 'social':
-        return stageJobs.filter(j => j.job_type === 'social');
+        return stageJobs.filter(j => j.job_type === 'social' && j.level > 0);
       default:
         return [];
     }
@@ -107,11 +109,11 @@ export function JobMapView({ className }: JobMapViewProps) {
         </div>
       </div>
       
-      <ScrollArea className="flex-1">
-        <div className="p-4">
+      <div className="flex-1 overflow-auto">
+        <div className="p-4 min-w-[1200px]">
           {/* Job Map Grid */}
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse min-w-[1000px]">
+          <div>
+            <table className="w-full border-collapse">
               <thead>
                 {/* Phase headers */}
                 <tr>
@@ -230,25 +232,25 @@ export function JobMapView({ className }: JobMapViewProps) {
           
           {/* Stats */}
           <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
-            <span>{filteredJobs.length} jobs {selectedICP ? `for ${selectedICP.replace('_', ' ')}` : 'total'}</span>
+            <span>{filteredJobs.filter(j => j.level > 0).length} sub-jobs {selectedICP ? `for ${selectedICP.replace('_', ' ')}` : 'total'}</span>
             <span>•</span>
-            <span>{filteredJobs.filter(j => j.job_stage).length} with stages assigned</span>
-            {jobsWithoutStages.length > 0 && (
+            <span>{filteredJobs.filter(j => j.job_stage && j.level > 0).length} with stages assigned</span>
+            {jobsWithoutStages.filter(j => j.level > 0).length > 0 && (
               <>
                 <span>•</span>
-                <span className="text-warning">{jobsWithoutStages.length} without stage</span>
+                <span className="text-warning">{jobsWithoutStages.filter(j => j.level > 0).length} without stage</span>
               </>
             )}
           </div>
           
-          {/* Jobs without stages */}
-          {jobsWithoutStages.length > 0 && (
+          {/* Jobs without stages (excluding L0) */}
+          {jobsWithoutStages.filter(j => j.level > 0).length > 0 && (
             <div className="mt-4 p-3 rounded-lg bg-secondary/30 border border-border">
               <h3 className="text-xs font-medium text-muted-foreground mb-2">
                 Jobs without stage assignment:
               </h3>
               <div className="flex flex-wrap gap-1">
-                {jobsWithoutStages.slice(0, 10).map(job => (
+                {jobsWithoutStages.filter(j => j.level > 0).slice(0, 10).map(job => (
                   <button
                     key={job.id}
                     className={cn(
@@ -261,16 +263,16 @@ export function JobMapView({ className }: JobMapViewProps) {
                     {job.title.slice(0, 25)}...
                   </button>
                 ))}
-                {jobsWithoutStages.length > 10 && (
+                {jobsWithoutStages.filter(j => j.level > 0).length > 10 && (
                   <span className="text-[10px] text-muted-foreground px-2 py-1">
-                    +{jobsWithoutStages.length - 10} more
+                    +{jobsWithoutStages.filter(j => j.level > 0).length - 10} more
                   </span>
                 )}
               </div>
             </div>
           )}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 }

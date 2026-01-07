@@ -138,11 +138,10 @@ export function JobFormDialog({ open, onOpenChange, editingJobId }: JobFormDialo
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+              <SelectContent>
                   <SelectItem value="functional">Functional</SelectItem>
                   <SelectItem value="emotional">Emotional</SelectItem>
                   <SelectItem value="social">Social</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -279,60 +278,64 @@ export function JobFormDialog({ open, onOpenChange, editingJobId }: JobFormDialo
             </div>
           </div>
           
-          <Separator />
-          
-          {/* Job Map Section */}
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">Job Map Assignment</Label>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="job_stage" className="text-xs text-muted-foreground">Job Stage</Label>
-                <Select
-                  value={formData.job_stage || 'none'}
-                  onValueChange={(value) => setFormData(prev => ({ 
-                    ...prev, 
-                    job_stage: value === 'none' ? null : value as JobStage 
-                  }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select stage" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">None</SelectItem>
-                    {Object.entries(JOB_STAGE_CONFIG).map(([stage, config]) => (
-                      <SelectItem key={stage} value={stage}>
-                        {config.label} ({config.phase})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+          {/* Job Map Section - Only show for non-L0 jobs */}
+          {formData.level > 0 && (
+            <>
+              <Separator />
               
-              <div className="space-y-2">
-                <Label htmlFor="main_job_id" className="text-xs text-muted-foreground">Main Job</Label>
-                <Select
-                  value={formData.main_job_id || 'none'}
-                  onValueChange={(value) => setFormData(prev => ({ 
-                    ...prev, 
-                    main_job_id: value === 'none' ? null : value 
-                  }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select main job" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">None (This is a main job)</SelectItem>
-                    {mainJobOptions.map(job => (
-                      <SelectItem key={job.id} value={job.id}>
-                        {job.title.length > 25 ? job.title.slice(0, 25) + '...' : job.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Job Map Assignment</Label>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="job_stage" className="text-xs text-muted-foreground">Job Stage</Label>
+                    <Select
+                      value={formData.job_stage || 'none'}
+                      onValueChange={(value) => setFormData(prev => ({ 
+                        ...prev, 
+                        job_stage: value === 'none' ? null : value as JobStage 
+                      }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select stage" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">None</SelectItem>
+                        {Object.entries(JOB_STAGE_CONFIG).map(([stage, config]) => (
+                          <SelectItem key={stage} value={stage}>
+                            {config.label} ({config.phase})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="main_job_id" className="text-xs text-muted-foreground">Main Job</Label>
+                    <Select
+                      value={formData.main_job_id || 'none'}
+                      onValueChange={(value) => setFormData(prev => ({ 
+                        ...prev, 
+                        main_job_id: value === 'none' ? null : value 
+                      }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select main job" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">None (This is a main job)</SelectItem>
+                        {mainJobOptions.map(job => (
+                          <SelectItem key={job.id} value={job.id}>
+                            {job.title.length > 25 ? job.title.slice(0, 25) + '...' : job.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
           
           <Separator />
           
