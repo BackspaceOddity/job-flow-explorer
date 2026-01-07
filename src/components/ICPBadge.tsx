@@ -32,7 +32,10 @@ const ICP_CONFIG: Record<ICP, { label: string; className: string }> = {
 };
 
 export function ICPBadge({ icp, size = 'md', className }: ICPBadgeProps) {
-  const config = ICP_CONFIG[icp];
+  const config = ICP_CONFIG[icp] || {
+    label: icp || 'Unknown',
+    className: 'bg-muted text-muted-foreground border-border',
+  };
   
   return (
     <span
