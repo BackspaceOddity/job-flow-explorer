@@ -51,6 +51,7 @@ const initialViewState: ViewState = {
   directionMode: 'before',
   activeView: 'graph',
   selectedMainJobId: null,
+  isLayoutFrozen: false,
 };
 
 const initialState: GraphState = {
@@ -84,6 +85,7 @@ type Action =
   | { type: 'SET_DIRECTION_MODE'; payload: DirectionMode }
   | { type: 'SET_ACTIVE_VIEW'; payload: ActiveView }
   | { type: 'SET_SELECTED_MAIN_JOB'; payload: string | null }
+  | { type: 'SET_LAYOUT_FROZEN'; payload: boolean }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_SAVED'; payload: Date };
 
@@ -256,6 +258,12 @@ function reducer(state: GraphState, action: Action): GraphState {
         viewState: { ...state.viewState, selectedMainJobId: action.payload },
       };
     
+    case 'SET_LAYOUT_FROZEN':
+      return {
+        ...state,
+        viewState: { ...state.viewState, isLayoutFrozen: action.payload },
+      };
+    
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };
     
@@ -295,6 +303,7 @@ interface GraphContextValue {
   setDirectionMode: (mode: DirectionMode) => void;
   setActiveView: (view: ActiveView) => void;
   setSelectedMainJob: (id: string | null) => void;
+  setLayoutFrozen: (frozen: boolean) => void;
   // Computed values
   filteredData: { jobs: Job[]; edges: Edge[] };
   uniqueLevels: number[];
@@ -453,6 +462,10 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
   
   const setSelectedMainJob = useCallback((id: string | null) => {
     dispatch({ type: 'SET_SELECTED_MAIN_JOB', payload: id });
+  }, []);
+  
+  const setLayoutFrozen = useCallback((frozen: boolean) => {
+    dispatch({ type: 'SET_LAYOUT_FROZEN', payload: frozen });
   }, []);
   
   // Computed: filtered data

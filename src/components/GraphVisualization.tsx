@@ -1,9 +1,11 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo, useCallback } from 'react';
 import * as d3 from 'd3';
 import { useGraph } from '@/context/GraphContext';
 import { Job, Edge } from '@/types/graph';
 import { JOB_TYPE_HEX } from '@/components/JobTypeBadge';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Lock, Unlock } from 'lucide-react';
 
 interface GraphVisualizationProps {
   className?: string;
@@ -24,8 +26,9 @@ interface SimLink extends d3.SimulationLinkDatum<SimNode> {
 
 export function GraphVisualization({ className }: GraphVisualizationProps) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const { state, filteredData, setSelectedNode, setHoveredNode } = useGraph();
-  const { selectedNodeId, hoveredNodeId, showCriticalPath, showLoops } = state.viewState;
+  const simulationRef = useRef<d3.Simulation<SimNode, SimLink> | null>(null);
+  const { state, filteredData, setSelectedNode, setHoveredNode, setLayoutFrozen } = useGraph();
+  const { selectedNodeId, showCriticalPath, showLoops, isLayoutFrozen } = state.viewState;
 
   const { nodes, links } = useMemo(() => {
     const nodes: SimNode[] = filteredData.jobs.map(job => {
@@ -95,12 +98,21 @@ export function GraphVisualization({ className }: GraphVisualizationProps) {
       .on('zoom', (event) => g.attr('transform', event.transform));
     svg.call(zoom);
 
-    // Simulation
+    // Simulation with stabilization settings
     const simulation = d3.forceSimulation(nodes)
-      .force('link', d3.forceLink(links).id((d: any) => d.id).distance(120))
-      .force('charge', d3.forceManyBody().strength(-300))
+      .force('link', d3.forceLink(links).id((d: any) => d.id).distance(150).strength(0.7))
+      .force('charge', d3.forceManyBody().strength(-200))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(40));
+      .force('collision', d3.forceCollide().radius(45))
+      .alphaDecay(0.03)
+      .alphaMin(0.001)
+      .velocityDecay(0.4);
+    
+    simulationRef.current = simulation;
+    
+    if (isLayoutFrozen) {
+      simulation.stop();
+    }
 
     // Links
     const link = g.append('g')
@@ -120,7 +132,7 @@ export function GraphVisualization({ className }: GraphVisualizationProps) {
       .attr('cursor', 'pointer')
       .call(d3.drag<SVGGElement, SimNode>()
         .on('start', (event, d) => {
-          if (!event.active) simulation.alphaTarget(0.3).restart();
+          if (!event.active && !isLayoutFrozen) simulation.alphaTarget(0.3).restart();
           d.fx = d.x;
           d.fy = d.y;
         })
@@ -129,9 +141,11 @@ export function GraphVisualization({ className }: GraphVisualizationProps) {
           d.fy = event.y;
         })
         .on('end', (event, d) => {
-          if (!event.active) simulation.alphaTarget(0);
-          d.fx = null;
-          d.fy = null;
+          if (!event.active && !isLayoutFrozen) simulation.alphaTarget(0);
+          if (!isLayoutFrozen) {
+            d.fx = null;
+            d.fy = null;
+          }
         }) as any);
 
     // Node circles
@@ -170,8 +184,24 @@ export function GraphVisualization({ className }: GraphVisualizationProps) {
       node.attr('transform', d => `translate(${d.x},${d.y})`);
     });
 
-    return () => { simulation.stop(); };
-  }, [nodes, links, selectedNodeId, showCriticalPath, showLoops, setSelectedNode, setHoveredNode]);
+    return () => { 
+      simulation.stop(); 
+      simulationRef.current = null;
+    };
+  }, [nodes, links, selectedNodeId, showCriticalPath, showLoops, isLayoutFrozen, setSelectedNode, setHoveredNode]);
+
+  const handleFreezeToggle = useCallback(() => {
+    const newFrozen = !isLayoutFrozen;
+    setLayoutFrozen(newFrozen);
+    
+    if (simulationRef.current) {
+      if (newFrozen) {
+        simulationRef.current.stop();
+      } else {
+        simulationRef.current.alpha(0.3).restart();
+      }
+    }
+  }, [isLayoutFrozen, setLayoutFrozen]);
 
   if (nodes.length === 0) {
     return (
@@ -184,5 +214,20 @@ export function GraphVisualization({ className }: GraphVisualizationProps) {
     );
   }
 
-  return <svg ref={svgRef} className={cn('w-full h-full bg-background', className)} />;
+  return (
+    <div className={cn('relative w-full h-full', className)}>
+      <div className="absolute top-3 right-3 z-10">
+        <Button
+          variant={isLayoutFrozen ? "default" : "secondary"}
+          size="sm"
+          onClick={handleFreezeToggle}
+          className="gap-2"
+        >
+          {isLayoutFrozen ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+          {isLayoutFrozen ? 'Frozen' : 'Live'}
+        </Button>
+      </div>
+      <svg ref={svgRef} className="w-full h-full bg-background" />
+    </div>
+  );
 }
