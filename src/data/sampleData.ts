@@ -158,14 +158,14 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
 
   // ========== BUILD COMPENSATION - Sub-jobs ==========
   step('Define compensation philosophy for global workforce', 'define', 'head_of_finance', MAIN_JOB_TITLES.BUILD_COMPENSATION, 8, 5),
-  { title: 'Locate salary benchmarking data per market', description: 'Source reliable compensation surveys for each country', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'locate', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
-  { title: 'Confirm benefits packages meet local expectations', description: 'Validate that benefits are competitive in each market', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 7, satisfaction: 4, job_stage: 'confirm', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
-  { title: 'Execute annual compensation reviews globally', description: 'Perform coordinated salary reviews across all locations', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 7, satisfaction: 5, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
-  { title: 'Monitor market rate changes continuously', description: 'Track salary trends in each operating market', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 6, satisfaction: 4, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
+  step('Locate salary benchmarking data per market', 'locate', 'hr_manager', MAIN_JOB_TITLES.BUILD_COMPENSATION, 8, 4),
+  step('Confirm benefits packages meet local expectations', 'confirm', 'hr_manager', MAIN_JOB_TITLES.BUILD_COMPENSATION, 7, 4),
+  step('Execute annual compensation reviews globally', 'execute', 'head_of_finance', MAIN_JOB_TITLES.BUILD_COMPENSATION, 7, 5),
+  step('Monitor market rate changes continuously', 'monitor', 'hr_manager', MAIN_JOB_TITLES.BUILD_COMPENSATION, 6, 4),
   
-  // DIFFERENTIATORS
-  { title: 'Prepare salary bands for each role by location', description: 'Create location-adjusted pay scales', level: 2, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 7, satisfaction: 5, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
-  { title: 'Design equity compensation for global employees', description: 'Create stock option plans that work internationally', level: 2, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 6, satisfaction: 3, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
+  // DIFFERENTIATORS - Using "When [context]: [requirement]" syntax
+  differentiator('When in multiple markets: Location-adjusted salary bands needed', 'prepare', 'head_of_finance', MAIN_JOB_TITLES.BUILD_COMPENSATION, 7, 5),
+  differentiator('When offering equity globally: International stock option complexity', 'execute', 'head_of_finance', MAIN_JOB_TITLES.BUILD_COMPENSATION, 6, 3),
   
   // OUTCOMES - Using "Minimize/Maximize [metric]" syntax
   outcome('Maximize candidate acceptance rate through competitive offers', 'execute', 'hiring_manager', MAIN_JOB_TITLES.BUILD_COMPENSATION, 9, 4),
@@ -176,24 +176,24 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   barrier('Lack of clarity on pay transparency requirements by country', 'execute', 'hr_manager', MAIN_JOB_TITLES.BUILD_COMPENSATION, 7, 4),
   
   // EMOTIONAL
-  { title: 'Feel confident about talent retention', description: 'Trust that compensation will keep top performers', level: 1, parent_id: null, icp: 'ceo', job_type: 'emotional', notes: '', importance: 8, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
-  { title: 'Feel fair about compensation decisions', description: 'Confidence that pay is equitable across regions', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'emotional', notes: '', importance: 7, satisfaction: 5, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
+  emotional('Feel confident about talent retention', 'execute', 'ceo', MAIN_JOB_TITLES.BUILD_COMPENSATION, 8, 4),
+  emotional('Feel fair about compensation decisions', 'monitor', 'hr_manager', MAIN_JOB_TITLES.BUILD_COMPENSATION, 7, 5),
   
   // SOCIAL
-  { title: 'Be known for fair pay practices', description: 'Build reputation for equitable compensation', level: 1, parent_id: null, icp: 'ceo', job_type: 'social', notes: '', importance: 6, satisfaction: 5, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
+  social('Be known for fair pay practices', 'follow_up', 'ceo', MAIN_JOB_TITLES.BUILD_COMPENSATION, 6, 5),
 
   // ========== L1/L2 JOBS FOR: Onboard distributed employees ==========
   // STEPS
-  { title: 'Define onboarding standards for remote employees', description: 'Establish consistent onboarding experience regardless of location', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'define', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
-  { title: 'Locate local onboarding partners where needed', description: 'Find vendors for equipment, workspace, and local support', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'locate', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
-  { title: 'Confirm IT equipment delivery before start date', description: 'Ensure new hires have everything they need on day one', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 8, satisfaction: 3, job_stage: 'confirm', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
-  { title: 'Execute virtual orientation sessions across time zones', description: 'Deliver engaging welcome sessions that work globally', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 7, satisfaction: 3, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
-  { title: 'Monitor new hire ramp-up progress', description: 'Track productivity milestones for new employees', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'functional', notes: '', importance: 7, satisfaction: 4, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
-  { title: 'Follow up on 30/60/90 day check-ins', description: 'Ensure new hires are supported through initial period', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
+  step('Define onboarding standards for remote employees', 'define', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 8, 4),
+  step('Locate local onboarding partners where needed', 'locate', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 6, 5),
+  step('Confirm IT equipment delivery before start date', 'confirm', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 8, 3),
+  step('Execute virtual orientation sessions across time zones', 'execute', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 7, 3),
+  step('Monitor new hire ramp-up progress', 'monitor', 'hiring_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 7, 4),
+  step('Follow up on 30/60/90 day check-ins', 'follow_up', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 6, 5),
   
-  // DIFFERENTIATORS
-  { title: 'Prepare onboarding materials in local languages', description: 'Translate key documents and training materials', level: 2, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
-  { title: 'Create buddy program for remote hires', description: 'Pair new hires with experienced colleagues', level: 2, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 5, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
+  // DIFFERENTIATORS - Using "When [context]: [requirement]" syntax
+  differentiator('When onboarding non-English speakers: Translated materials required', 'prepare', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 6, 5),
+  differentiator('When integrating remote hires: Buddy system accelerates connection', 'execute', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 5, 4),
   
   // OUTCOMES - Using "Minimize/Maximize [metric]" syntax
   outcome('Minimize time to full productivity for new hires', 'monitor', 'hiring_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 9, 4),
@@ -204,24 +204,24 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   barrier('Unreliable equipment delivery to remote locations', 'confirm', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 8, 3),
   
   // EMOTIONAL
-  { title: 'Feel welcomed despite physical distance', description: 'New hires feel part of the team from day one', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'emotional', notes: '', importance: 8, satisfaction: 3, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
-  { title: 'Feel prepared for the role', description: 'New hires understand expectations and have resources', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'emotional', notes: '', importance: 7, satisfaction: 4, job_stage: 'confirm', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
+  emotional('Feel welcomed despite physical distance', 'execute', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 8, 3),
+  emotional('Feel prepared for the role', 'confirm', 'hiring_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 7, 4),
   
   // SOCIAL
-  { title: 'Be recognized as part of the team', description: 'Remote employees feel included in team activities', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'social', notes: '', importance: 7, satisfaction: 4, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
-  { title: 'Connect with colleagues across locations', description: 'Build relationships with distributed team', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'social', notes: '', importance: 6, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
+  social('Be recognized as part of the team', 'follow_up', 'hiring_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 7, 4),
+  social('Connect with colleagues across locations', 'execute', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 6, 4),
 
   // ========== L1/L2 JOBS FOR: Manage payroll across multiple currencies ==========
   // STEPS
-  { title: 'Define payroll processing timelines per country', description: 'Establish pay dates accounting for local banking holidays', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 8, satisfaction: 5, job_stage: 'define', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MANAGE_PAYROLL },
-  { title: 'Locate reliable payroll providers per region', description: 'Vet and select local payroll processing partners', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'locate', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MANAGE_PAYROLL },
-  { title: 'Confirm tax withholding calculations are correct', description: 'Verify deductions meet local requirements', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 9, satisfaction: 4, job_stage: 'confirm', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MANAGE_PAYROLL },
-  { title: 'Execute monthly payroll runs globally', description: 'Process payroll accurately across all locations', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 9, satisfaction: 5, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MANAGE_PAYROLL },
-  { title: 'Conclude year-end tax filings per country', description: 'Complete annual tax reporting requirements', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 8, satisfaction: 5, job_stage: 'conclude', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MANAGE_PAYROLL },
+  step('Define payroll processing timelines per country', 'define', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 8, 5),
+  step('Locate reliable payroll providers per region', 'locate', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 8, 4),
+  step('Confirm tax withholding calculations are correct', 'confirm', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 9, 4),
+  step('Execute monthly payroll runs globally', 'execute', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 9, 5),
+  step('Conclude year-end tax filings per country', 'conclude', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 8, 5),
   
-  // DIFFERENTIATORS
-  { title: 'Prepare multi-currency payment infrastructure', description: 'Set up banking and forex arrangements', level: 2, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 7, satisfaction: 5, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MANAGE_PAYROLL },
-  { title: 'Monitor currency fluctuation impact on costs', description: 'Track forex exposure and budget implications', level: 2, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MANAGE_PAYROLL },
+  // DIFFERENTIATORS - Using "When [context]: [requirement]" syntax
+  differentiator('When paying in multiple currencies: Banking and forex setup required', 'prepare', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 7, 5),
+  differentiator('When budgeting globally: Currency volatility tracking needed', 'monitor', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 6, 5),
   
   // OUTCOMES - Using "Minimize/Maximize [metric]" syntax
   outcome('Maximize on-time payment rate across all currencies', 'execute', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 10, 5),
@@ -232,24 +232,24 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   barrier('Unexpected currency volatility impacting budgets', 'monitor', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 8, 3),
   
   // EMOTIONAL
-  { title: 'Feel secure about payment accuracy', description: 'Trust that employees are paid correctly every time', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'emotional', notes: '', importance: 9, satisfaction: 6, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MANAGE_PAYROLL },
-  { title: 'Feel confident about tax compliance', description: 'Trust withholdings and filings are correct', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'emotional', notes: '', importance: 8, satisfaction: 5, job_stage: 'conclude', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MANAGE_PAYROLL },
+  emotional('Feel secure about payment accuracy', 'execute', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 9, 6),
+  emotional('Feel confident about tax compliance', 'conclude', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 8, 5),
   
   // SOCIAL
-  { title: 'Be trusted by employees for reliable pay', description: 'Build reputation for never missing payroll', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'social', notes: '', importance: 8, satisfaction: 6, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MANAGE_PAYROLL },
+  social('Be trusted by employees for reliable pay', 'execute', 'hr_manager', MAIN_JOB_TITLES.MANAGE_PAYROLL, 8, 6),
 
   // ========== L1/L2 JOBS FOR: Establish entity structure ==========
   // STEPS
-  { title: 'Define entity requirements per target market', description: 'Determine what legal structures are needed', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'define', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ESTABLISH_ENTITY },
-  { title: 'Locate corporate formation specialists', description: 'Find lawyers who can set up entities locally', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 7, satisfaction: 5, job_stage: 'locate', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ESTABLISH_ENTITY },
-  { title: 'Prepare incorporation documents', description: 'Draft articles of incorporation and bylaws', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 7, satisfaction: 5, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ESTABLISH_ENTITY },
-  { title: 'Confirm capital requirements are met', description: 'Ensure sufficient funding for entity formation', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 7, satisfaction: 6, job_stage: 'confirm', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ESTABLISH_ENTITY },
-  { title: 'Execute entity registration filings', description: 'Submit all required registration documents', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ESTABLISH_ENTITY },
-  { title: 'Monitor ongoing compliance requirements', description: 'Track annual filings and corporate governance', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ESTABLISH_ENTITY },
+  step('Define entity requirements per target market', 'define', 'head_of_legal', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 8, 4),
+  step('Locate corporate formation specialists', 'locate', 'head_of_legal', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 7, 5),
+  step('Prepare incorporation documents', 'prepare', 'head_of_legal', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 7, 5),
+  step('Confirm capital requirements are met', 'confirm', 'head_of_finance', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 7, 6),
+  step('Execute entity registration filings', 'execute', 'head_of_legal', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 8, 4),
+  step('Monitor ongoing compliance requirements', 'monitor', 'head_of_legal', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 6, 5),
   
-  // DIFFERENTIATORS
-  { title: 'Set up local bank accounts for entity', description: 'Establish banking relationships in-country', level: 2, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 7, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ESTABLISH_ENTITY },
-  { title: 'Register for local tax identification', description: 'Obtain all required tax registrations', level: 2, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 8, satisfaction: 5, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ESTABLISH_ENTITY },
+  // DIFFERENTIATORS - Using "When [context]: [requirement]" syntax
+  differentiator('When establishing local presence: In-country banking required', 'execute', 'head_of_finance', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 7, 4),
+  differentiator('When operating legally: Local tax registration mandatory', 'execute', 'head_of_finance', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 8, 5),
   
   // OUTCOMES - Using "Minimize/Maximize [metric]" syntax
   outcome('Minimize time to achieve operational entity status', 'execute', 'head_of_legal', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 9, 4),
@@ -260,23 +260,23 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   barrier('Lack of clarity on minimum capital requirements by jurisdiction', 'confirm', 'head_of_finance', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 7, 4),
   
   // EMOTIONAL
-  { title: 'Feel confident about corporate structure', description: 'Trust entity is properly set up', level: 1, parent_id: null, icp: 'ceo', job_type: 'emotional', notes: '', importance: 7, satisfaction: 5, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ESTABLISH_ENTITY },
+  emotional('Feel confident about corporate structure', 'execute', 'ceo', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 7, 5),
   
   // SOCIAL
-  { title: 'Be recognized as a legitimate local presence', description: 'Build credibility in the market', level: 1, parent_id: null, icp: 'ceo', job_type: 'social', notes: '', importance: 6, satisfaction: 5, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ESTABLISH_ENTITY },
+  social('Be recognized as a legitimate local presence', 'follow_up', 'ceo', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 6, 5),
 
   // ========== L1/L2 JOBS FOR: Navigate visa and work permit processes ==========
   // STEPS
-  { title: 'Define visa sponsorship policy for the company', description: 'Establish criteria for when to sponsor work visas', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 7, satisfaction: 5, job_stage: 'define', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.NAVIGATE_VISAS },
-  { title: 'Locate immigration attorneys in key countries', description: 'Build network of trusted immigration legal partners', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'locate', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.NAVIGATE_VISAS },
-  { title: 'Confirm employee eligibility for visa type', description: 'Verify qualifications match visa requirements', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'confirm', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.NAVIGATE_VISAS },
-  { title: 'Execute visa applications within required timelines', description: 'Submit applications before deadlines with complete materials', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: 'challenge: unpredictable processing times', importance: 9, satisfaction: 3, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.NAVIGATE_VISAS },
-  { title: 'Monitor visa expiration dates and renewals', description: 'Track work authorization status for all employees', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 8, satisfaction: 5, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.NAVIGATE_VISAS },
-  { title: 'Conclude permanent residency applications', description: 'Support employees seeking long-term status', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 6, satisfaction: 4, job_stage: 'conclude', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.NAVIGATE_VISAS },
+  step('Define visa sponsorship policy for the company', 'define', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS, 7, 5),
+  step('Locate immigration attorneys in key countries', 'locate', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS, 8, 4),
+  step('Confirm employee eligibility for visa type', 'confirm', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS, 8, 4),
+  step('Execute visa applications within required timelines', 'execute', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS, 9, 3),
+  step('Monitor visa expiration dates and renewals', 'monitor', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS, 8, 5),
+  step('Conclude permanent residency applications', 'conclude', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS, 6, 4),
   
-  // DIFFERENTIATORS
-  { title: 'Prepare visa application documentation packages', description: 'Compile required documents for each visa type', level: 2, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 7, satisfaction: 4, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.NAVIGATE_VISAS },
-  { title: 'Build visa tracking system', description: 'Implement technology to manage immigration cases', level: 2, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 5, satisfaction: 3, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.NAVIGATE_VISAS },
+  // DIFFERENTIATORS - Using "When [context]: [requirement]" syntax
+  differentiator('When sponsoring visas: Complete documentation package required', 'prepare', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS, 7, 4),
+  differentiator('When managing multiple visas: Automated tracking system needed', 'execute', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS, 5, 3),
   
   // OUTCOMES - Using "Minimize/Maximize [metric]" syntax
   outcome('Maximize visa approval rate for sponsored employees', 'execute', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS, 9, 4),
@@ -287,24 +287,24 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   barrier('Lack of advance notice on immigration policy changes', 'monitor', 'head_of_legal', MAIN_JOB_TITLES.NAVIGATE_VISAS, 7, 3),
   
   // EMOTIONAL
-  { title: 'Avoid immigration compliance violations', description: 'Prevent issues that could result in fines or bans', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'emotional', notes: 'barrier: complex and changing regulations', importance: 9, satisfaction: 3, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.NAVIGATE_VISAS },
-  { title: 'Feel secure about employee work status', description: 'Confidence all employees are properly authorized', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'emotional', notes: '', importance: 8, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.NAVIGATE_VISAS },
+  emotional('Avoid anxiety about immigration compliance', 'monitor', 'head_of_legal', MAIN_JOB_TITLES.NAVIGATE_VISAS, 9, 3),
+  emotional('Feel secure about employee work status', 'execute', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS, 8, 4),
   
   // SOCIAL
-  { title: 'Be known for supporting employee mobility', description: 'Reputation for helping with relocation', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'social', notes: '', importance: 5, satisfaction: 5, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.NAVIGATE_VISAS },
+  social('Be known for supporting employee mobility', 'follow_up', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS, 5, 5),
 
   // ========== L1/L2 JOBS FOR: Create unified company culture ==========
   // STEPS
-  { title: 'Define core cultural values for global workforce', description: 'Articulate values that transcend geographic boundaries', level: 1, parent_id: null, icp: 'ceo', job_type: 'functional', notes: '', importance: 8, satisfaction: 5, job_stage: 'define', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
-  { title: 'Locate cultural ambassadors in each region', description: 'Identify local leaders to champion company culture', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'locate', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
-  { title: 'Prepare cultural onboarding materials', description: 'Create content that communicates values across cultures', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 6, satisfaction: 4, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
-  { title: 'Execute global all-hands meetings across time zones', description: 'Host inclusive company-wide meetings that work globally', level: 1, parent_id: null, icp: 'ceo', job_type: 'functional', notes: '', importance: 7, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
-  { title: 'Monitor employee engagement across regions', description: 'Track culture and engagement metrics by location', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 7, satisfaction: 4, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
-  { title: 'Modify cultural initiatives based on feedback', description: 'Adapt programs to local needs while maintaining core values', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 5, satisfaction: 5, job_stage: 'modify', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
+  step('Define core cultural values for global workforce', 'define', 'ceo', MAIN_JOB_TITLES.CREATE_CULTURE, 8, 5),
+  step('Locate cultural ambassadors in each region', 'locate', 'hr_manager', MAIN_JOB_TITLES.CREATE_CULTURE, 6, 5),
+  step('Prepare cultural onboarding materials', 'prepare', 'hr_manager', MAIN_JOB_TITLES.CREATE_CULTURE, 6, 4),
+  step('Execute global all-hands meetings across time zones', 'execute', 'ceo', MAIN_JOB_TITLES.CREATE_CULTURE, 7, 4),
+  step('Monitor employee engagement across regions', 'monitor', 'hr_manager', MAIN_JOB_TITLES.CREATE_CULTURE, 7, 4),
+  step('Modify cultural initiatives based on feedback', 'modify', 'hr_manager', MAIN_JOB_TITLES.CREATE_CULTURE, 5, 5),
   
-  // DIFFERENTIATORS
-  { title: 'Create virtual team-building experiences', description: 'Design engaging remote activities that build connection', level: 2, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 5, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
-  { title: 'Build internal communications platform', description: 'Implement tools for async global communication', level: 2, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
+  // DIFFERENTIATORS - Using "When [context]: [requirement]" syntax
+  differentiator('When building remote culture: Virtual engagement activities needed', 'execute', 'hr_manager', MAIN_JOB_TITLES.CREATE_CULTURE, 5, 4),
+  differentiator('When communicating globally: Async-first tools required', 'prepare', 'hr_manager', MAIN_JOB_TITLES.CREATE_CULTURE, 6, 5),
   
   // OUTCOMES - Using "Minimize/Maximize [metric]" syntax
   outcome('Maximize employee engagement scores across all regions', 'monitor', 'hr_manager', MAIN_JOB_TITLES.CREATE_CULTURE, 9, 4),
@@ -315,25 +315,25 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   barrier('Time zone constraints limiting real-time collaboration', 'execute', 'ceo', MAIN_JOB_TITLES.CREATE_CULTURE, 7, 4),
   
   // EMOTIONAL
-  { title: 'Feel connected despite physical distance', description: 'Employees feel part of something bigger', level: 1, parent_id: null, icp: 'ceo', job_type: 'emotional', notes: '', importance: 8, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
-  { title: 'Feel proud of company culture', description: 'Take pride in how we work together', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'emotional', notes: '', importance: 7, satisfaction: 5, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
+  emotional('Feel connected despite physical distance', 'execute', 'ceo', MAIN_JOB_TITLES.CREATE_CULTURE, 8, 4),
+  emotional('Feel proud of company culture', 'follow_up', 'hr_manager', MAIN_JOB_TITLES.CREATE_CULTURE, 7, 5),
   
   // SOCIAL
-  { title: 'Be seen as an inclusive global employer', description: 'Build reputation for valuing diverse perspectives', level: 1, parent_id: null, icp: 'ceo', job_type: 'social', notes: '', importance: 7, satisfaction: 5, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
-  { title: 'Attract talent with strong culture reputation', description: 'Use culture as competitive advantage', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'social', notes: '', importance: 6, satisfaction: 4, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
+  social('Be seen as an inclusive global employer', 'follow_up', 'ceo', MAIN_JOB_TITLES.CREATE_CULTURE, 7, 5),
+  social('Attract talent with strong culture reputation', 'monitor', 'hr_manager', MAIN_JOB_TITLES.CREATE_CULTURE, 6, 4),
 
   // ========== L1/L2 JOBS FOR: Monitor employee performance remotely ==========
   // STEPS
-  { title: 'Define performance metrics for remote roles', description: 'Establish clear KPIs that work for distributed teams', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'define', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MONITOR_PERFORMANCE },
-  { title: 'Locate performance management tools for global teams', description: 'Select software that supports async feedback', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'locate', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MONITOR_PERFORMANCE },
-  { title: 'Prepare performance review templates', description: 'Create consistent evaluation frameworks', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MONITOR_PERFORMANCE },
-  { title: 'Execute regular 1:1s across time zones', description: 'Maintain consistent check-ins despite geography', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MONITOR_PERFORMANCE },
-  { title: 'Monitor productivity without micromanaging', description: 'Track outcomes while respecting autonomy', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'functional', notes: 'barrier: finding right balance of visibility', importance: 7, satisfaction: 3, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MONITOR_PERFORMANCE },
-  { title: 'Conclude annual performance reviews globally', description: 'Complete consistent evaluations across all locations', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 7, satisfaction: 5, job_stage: 'conclude', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MONITOR_PERFORMANCE },
+  step('Define performance metrics for remote roles', 'define', 'hiring_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 8, 4),
+  step('Locate performance management tools for global teams', 'locate', 'hr_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 6, 5),
+  step('Prepare performance review templates', 'prepare', 'hr_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 6, 5),
+  step('Execute regular 1:1s across time zones', 'execute', 'hiring_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 8, 4),
+  step('Monitor productivity without micromanaging', 'monitor', 'hiring_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 7, 3),
+  step('Conclude annual performance reviews globally', 'conclude', 'hr_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 7, 5),
   
-  // DIFFERENTIATORS
-  { title: 'Implement continuous feedback system', description: 'Enable real-time performance conversations', level: 2, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 5, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MONITOR_PERFORMANCE },
-  { title: 'Create remote performance dashboards', description: 'Build visibility into team productivity metrics', level: 2, parent_id: null, icp: 'hiring_manager', job_type: 'functional', notes: '', importance: 5, satisfaction: 3, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MONITOR_PERFORMANCE },
+  // DIFFERENTIATORS - Using "When [context]: [requirement]" syntax
+  differentiator('When managing remotely: Real-time feedback loops essential', 'execute', 'hr_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 5, 4),
+  differentiator('When tracking distributed teams: Visibility dashboards needed', 'monitor', 'hiring_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 5, 3),
   
   // OUTCOMES - Using "Minimize/Maximize [metric]" syntax
   outcome('Maximize consistency of performance standards across locations', 'execute', 'hr_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 9, 4),
@@ -344,24 +344,24 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   barrier('Cultural differences affecting feedback interpretation', 'prepare', 'hr_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 7, 4),
   
   // EMOTIONAL
-  { title: 'Feel trusted while working remotely', description: 'Employees feel empowered not surveilled', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'emotional', notes: '', importance: 8, satisfaction: 5, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MONITOR_PERFORMANCE },
-  { title: 'Feel confident about team productivity', description: 'Trust that work is getting done', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'emotional', notes: '', importance: 7, satisfaction: 4, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MONITOR_PERFORMANCE },
+  emotional('Feel trusted while working remotely', 'execute', 'hiring_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 8, 5),
+  emotional('Feel confident about team productivity', 'monitor', 'hiring_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 7, 4),
   
   // SOCIAL
-  { title: 'Be recognized for fair management practices', description: 'Reputation for equitable treatment', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'social', notes: '', importance: 6, satisfaction: 5, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MONITOR_PERFORMANCE },
+  social('Be recognized for fair management practices', 'follow_up', 'hiring_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 6, 5),
 
   // ========== L1/L2 JOBS FOR: Handle cross-border terminations ==========
   // STEPS
-  { title: 'Define termination procedures per jurisdiction', description: 'Document compliant offboarding process for each country', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'define', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
-  { title: 'Locate employment litigation counsel per region', description: 'Have legal support ready for contested terminations', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 7, satisfaction: 5, job_stage: 'locate', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
-  { title: 'Confirm notice period requirements per country', description: 'Verify legal notice requirements for terminations', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 8, satisfaction: 5, job_stage: 'confirm', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
-  { title: 'Execute termination meetings with cultural sensitivity', description: 'Handle difficult conversations appropriately across cultures', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 7, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
-  { title: 'Conclude final payments and documentation', description: 'Complete all financial and legal obligations', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 8, satisfaction: 6, job_stage: 'conclude', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
-  { title: 'Follow up on offboarding checklist completion', description: 'Ensure all items are completed post-termination', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 6, satisfaction: 6, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
+  step('Define termination procedures per jurisdiction', 'define', 'head_of_legal', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 8, 4),
+  step('Locate employment litigation counsel per region', 'locate', 'head_of_legal', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 7, 5),
+  step('Confirm notice period requirements per country', 'confirm', 'head_of_legal', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 8, 5),
+  step('Execute termination meetings with cultural sensitivity', 'execute', 'hr_manager', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 7, 4),
+  step('Conclude final payments and documentation', 'conclude', 'head_of_finance', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 8, 6),
+  step('Follow up on offboarding checklist completion', 'follow_up', 'hr_manager', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 6, 6),
   
-  // DIFFERENTIATORS
-  { title: 'Prepare severance calculations per local law', description: 'Compute legally compliant separation packages', level: 2, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 7, satisfaction: 5, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
-  { title: 'Create termination documentation templates', description: 'Build country-specific termination letter templates', level: 2, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
+  // DIFFERENTIATORS - Using "When [context]: [requirement]" syntax
+  differentiator('When terminating internationally: Country-specific severance required', 'prepare', 'head_of_finance', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 7, 5),
+  differentiator('When offboarding globally: Jurisdiction-specific templates needed', 'prepare', 'head_of_legal', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 6, 5),
   
   // OUTCOMES - Using "Minimize/Maximize [metric]" syntax
   outcome('Minimize risk of legal claims from terminations', 'conclude', 'head_of_legal', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 10, 5),
@@ -372,12 +372,12 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   barrier('Disputed terminations requiring international litigation', 'execute', 'head_of_legal', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 9, 3),
   
   // EMOTIONAL
-  { title: 'Avoid wrongful termination lawsuits', description: 'Prevent legal action from former employees', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'emotional', notes: 'risk: varies greatly by country', importance: 9, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
-  { title: 'Feel confident about termination decisions', description: 'Trust the process is fair and compliant', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'emotional', notes: '', importance: 7, satisfaction: 5, job_stage: 'confirm', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
+  emotional('Avoid wrongful termination lawsuit anxiety', 'execute', 'head_of_legal', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 9, 4),
+  emotional('Feel confident about termination decisions', 'confirm', 'hr_manager', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 7, 5),
   
   // SOCIAL
-  { title: 'Maintain positive employer brand post-termination', description: 'Ensure departing employees speak well of company', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'social', notes: '', importance: 6, satisfaction: 5, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
-  { title: 'Preserve team morale after terminations', description: 'Remaining team maintains trust in leadership', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'social', notes: '', importance: 7, satisfaction: 4, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
+  social('Maintain positive employer brand post-termination', 'follow_up', 'hr_manager', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 6, 5),
+  social('Preserve team morale after terminations', 'follow_up', 'hiring_manager', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 7, 4),
 ];
 
 export function generateSampleEdges(jobs: Job[]): Omit<Edge, 'id'>[] {

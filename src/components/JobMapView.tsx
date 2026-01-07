@@ -401,7 +401,7 @@ export function JobMapView({ className }: JobMapViewProps) {
               <tbody>
                 {ROW_ORDER.map(category => (
                   <tr key={category}>
-                    <td className="p-2 border border-border bg-secondary/50 sticky left-0 z-10">
+                    <td className="p-2 border border-border bg-card sticky left-0 z-10">
                       <div className="flex items-center gap-2">
                         <span className={cn("p-1 rounded", CATEGORY_COLORS[category].bg, CATEGORY_COLORS[category].text)}>
                           {ROW_CONFIG[category].icon}
@@ -456,13 +456,17 @@ export function JobMapView({ className }: JobMapViewProps) {
                                               I:{job.importance} S:{job.satisfaction}
                                             </span>
                                           )}
+                                          {score !== null && (
+                                            <span className={cn(
+                                              "text-[9px] font-bold px-1.5 rounded",
+                                              score >= 12 ? "bg-white/30" : "bg-black/20",
+                                              underserved && "bg-white/40 ring-1 ring-white/60"
+                                            )}>
+                                              ⚡{score}
+                                            </span>
+                                          )}
                                           {underserved && (
                                             <AlertTriangle className="w-3 h-3 text-white/90" />
-                                          )}
-                                          {score !== null && score >= 12 && (
-                                            <span className="text-[9px] font-bold bg-white/20 px-1 rounded">
-                                              {score}
-                                            </span>
                                           )}
                                         </div>
                                       </button>
