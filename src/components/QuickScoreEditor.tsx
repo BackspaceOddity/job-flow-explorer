@@ -57,7 +57,7 @@ export function QuickScoreEditor({
       </div>
 
       {/* Importance slider */}
-      <div className="space-y-1 overflow-hidden">
+      <div className="space-y-1 w-full overflow-hidden">
         <div className="flex items-center justify-between">
           <span className={cn('text-muted-foreground', compact ? 'text-[10px]' : 'text-xs')}>
             Importance
@@ -66,14 +66,16 @@ export function QuickScoreEditor({
             {importance ?? '—'}
           </span>
         </div>
-        <Slider
-          value={importance !== null ? [importance] : [5]}
-          onValueChange={([v]) => onImportanceChange(v)}
-          min={1}
-          max={10}
-          step={1}
-          className="w-full max-w-full"
-        />
+        <div className="w-full pr-1">
+          <Slider
+            value={importance !== null ? [importance] : [5]}
+            onValueChange={([v]) => onImportanceChange(v)}
+            min={1}
+            max={10}
+            step={1}
+            className="w-full"
+          />
+        </div>
         {!compact && (
           <div className="flex justify-between text-[10px] text-muted-foreground">
             <span>Low</span>
@@ -83,7 +85,7 @@ export function QuickScoreEditor({
       </div>
 
       {/* Satisfaction slider */}
-      <div className="space-y-1 overflow-hidden">
+      <div className="space-y-1 w-full overflow-hidden">
         <div className="flex items-center justify-between">
           <span className={cn('text-muted-foreground', compact ? 'text-[10px]' : 'text-xs')}>
             Satisfaction
@@ -92,14 +94,16 @@ export function QuickScoreEditor({
             {satisfaction ?? '—'}
           </span>
         </div>
-        <Slider
-          value={satisfaction !== null ? [satisfaction] : [5]}
-          onValueChange={([v]) => onSatisfactionChange(v)}
-          min={1}
-          max={10}
-          step={1}
-          className="w-full max-w-full"
-        />
+        <div className="w-full pr-1">
+          <Slider
+            value={satisfaction !== null ? [satisfaction] : [5]}
+            onValueChange={([v]) => onSatisfactionChange(v)}
+            min={1}
+            max={10}
+            step={1}
+            className="w-full"
+          />
+        </div>
         {!compact && (
           <div className="flex justify-between text-[10px] text-muted-foreground">
             <span>Low</span>

@@ -134,14 +134,20 @@ export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, onAnaly
               {/* Job Types */}
               <div className="space-y-2">
                 <Label className="text-xs text-muted-foreground">Job Type</Label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-col gap-1.5">
                   {jobTypes.map(type => (
-                    <label key={type} className="flex items-center gap-1.5 cursor-pointer">
+                    <label key={type} className="flex items-center gap-2 cursor-pointer">
                       <Checkbox
                         checked={filters.jobTypes.includes(type)}
                         onCheckedChange={() => handleTypeToggle(type)}
                         className="w-3.5 h-3.5"
                       />
+                      <span className={cn(
+                        "w-2.5 h-2.5 rounded-full",
+                        type === 'functional' && "bg-[hsl(199,89%,48%)]",
+                        type === 'emotional' && "bg-[hsl(340,82%,52%)]",
+                        type === 'social' && "bg-[hsl(38,92%,50%)]"
+                      )} />
                       <span className="text-xs capitalize">{type}</span>
                     </label>
                   ))}
