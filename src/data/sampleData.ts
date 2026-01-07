@@ -162,12 +162,12 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   { title: 'Design equity compensation for global employees', description: 'Create stock option plans that work internationally', level: 2, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 6, satisfaction: 3, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
   
   // OUTCOMES
-  outcome('Attract top talent with competitive offers', 'win candidates against local competitors', 'execute', 'hiring_manager', MAIN_JOB_TITLES.BUILD_COMPENSATION),
-  outcome('Maintain pay equity across regions', 'ensure fair compensation globally', 'monitor', 'hr_manager', MAIN_JOB_TITLES.BUILD_COMPENSATION),
+  outcome('Attract top talent with competitive offers', 'execute', 'hiring_manager', MAIN_JOB_TITLES.BUILD_COMPENSATION, 9, 4),
+  outcome('Maintain pay equity across regions', 'monitor', 'hr_manager', MAIN_JOB_TITLES.BUILD_COMPENSATION, 8, 5),
   
   // BARRIERS
-  barrier('Balance cost constraints with competitiveness', 'budget limits vs market demands', 'prepare', 'head_of_finance', MAIN_JOB_TITLES.BUILD_COMPENSATION),
-  barrier('Address pay transparency requirements', 'new laws requiring salary disclosure', 'execute', 'hr_manager', MAIN_JOB_TITLES.BUILD_COMPENSATION),
+  barrier('Balance cost constraints with competitiveness', 'prepare', 'head_of_finance', MAIN_JOB_TITLES.BUILD_COMPENSATION, 8, 3),
+  barrier('Address pay transparency requirements', 'execute', 'hr_manager', MAIN_JOB_TITLES.BUILD_COMPENSATION, 7, 4),
   
   // EMOTIONAL
   { title: 'Feel confident about talent retention', description: 'Trust that compensation will keep top performers', level: 1, parent_id: null, icp: 'ceo', job_type: 'emotional', notes: '', importance: 8, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
@@ -190,12 +190,12 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   { title: 'Create buddy program for remote hires', description: 'Pair new hires with experienced colleagues', level: 2, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 5, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
   
   // OUTCOMES
-  outcome('Achieve time-to-productivity targets', 'new hires reach full productivity quickly', 'monitor', 'hiring_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES),
-  outcome('Reduce early turnover rates', 'retain new hires through first year', 'follow_up', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES),
+  outcome('Achieve time-to-productivity targets', 'monitor', 'hiring_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 9, 4),
+  outcome('Reduce early turnover rates', 'follow_up', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 8, 5),
   
   // BARRIERS
-  barrier('Coordinate across time zones effectively', 'scheduling challenges for global sessions', 'execute', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES),
-  barrier('Deliver equipment to remote locations', 'logistics issues in some countries', 'confirm', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES),
+  barrier('Coordinate across time zones effectively', 'execute', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 7, 3),
+  barrier('Deliver equipment to remote locations', 'confirm', 'hr_manager', MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, 8, 3),
   
   // EMOTIONAL
   { title: 'Feel welcomed despite physical distance', description: 'New hires feel part of the team from day one', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'emotional', notes: '', importance: 8, satisfaction: 3, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ONBOARD_EMPLOYEES },
@@ -218,12 +218,12 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   { title: 'Monitor currency fluctuation impact on costs', description: 'Track forex exposure and budget implications', level: 2, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MANAGE_PAYROLL },
   
   // OUTCOMES
-  outcome('Achieve 100% on-time payment rate', 'never miss a payroll deadline', 'execute', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL),
-  outcome('Maintain zero payroll errors', 'pay correct amounts every time', 'confirm', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL),
+  outcome('Achieve 100% on-time payment rate', 'execute', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 10, 5),
+  outcome('Maintain zero payroll errors', 'confirm', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 9, 4),
   
   // BARRIERS
-  barrier('Reconcile different pay periods globally', 'varying monthly/bi-weekly cycles', 'define', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL),
-  barrier('Handle unexpected currency volatility', 'forex rates impact budgets', 'monitor', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL),
+  barrier('Reconcile different pay periods globally', 'define', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 7, 4),
+  barrier('Handle unexpected currency volatility', 'monitor', 'head_of_finance', MAIN_JOB_TITLES.MANAGE_PAYROLL, 8, 3),
   
   // EMOTIONAL
   { title: 'Feel secure about payment accuracy', description: 'Trust that employees are paid correctly every time', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'emotional', notes: '', importance: 9, satisfaction: 6, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MANAGE_PAYROLL },
@@ -246,12 +246,12 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   { title: 'Register for local tax identification', description: 'Obtain all required tax registrations', level: 2, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 8, satisfaction: 5, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ESTABLISH_ENTITY },
   
   // OUTCOMES
-  outcome('Achieve operational entity status', 'entity can legally hire and operate', 'execute', 'head_of_legal', MAIN_JOB_TITLES.ESTABLISH_ENTITY),
-  outcome('Complete formation within timeline', 'meet strategic deadlines for entity setup', 'conclude', 'ceo', MAIN_JOB_TITLES.ESTABLISH_ENTITY),
+  outcome('Achieve operational entity status', 'execute', 'head_of_legal', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 9, 4),
+  outcome('Complete formation within timeline', 'conclude', 'ceo', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 8, 5),
   
   // BARRIERS
-  barrier('Navigate bureaucratic registration delays', 'slow government processing times', 'execute', 'head_of_legal', MAIN_JOB_TITLES.ESTABLISH_ENTITY),
-  barrier('Meet minimum capital requirements', 'significant upfront investment needed', 'confirm', 'head_of_finance', MAIN_JOB_TITLES.ESTABLISH_ENTITY),
+  barrier('Navigate bureaucratic registration delays', 'execute', 'head_of_legal', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 8, 3),
+  barrier('Meet minimum capital requirements', 'confirm', 'head_of_finance', MAIN_JOB_TITLES.ESTABLISH_ENTITY, 7, 4),
   
   // EMOTIONAL
   { title: 'Feel confident about corporate structure', description: 'Trust entity is properly set up', level: 1, parent_id: null, icp: 'ceo', job_type: 'emotional', notes: '', importance: 7, satisfaction: 5, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ESTABLISH_ENTITY },
@@ -273,12 +273,12 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   { title: 'Build visa tracking system', description: 'Implement technology to manage immigration cases', level: 2, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 5, satisfaction: 3, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.NAVIGATE_VISAS },
   
   // OUTCOMES
-  outcome('Achieve visa approval for all sponsored employees', 'successfully obtain work authorization', 'execute', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS),
-  outcome('Maintain zero immigration compliance violations', 'perfect record with authorities', 'monitor', 'head_of_legal', MAIN_JOB_TITLES.NAVIGATE_VISAS),
+  outcome('Achieve visa approval for all sponsored employees', 'execute', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS, 9, 4),
+  outcome('Maintain zero immigration compliance violations', 'monitor', 'head_of_legal', MAIN_JOB_TITLES.NAVIGATE_VISAS, 10, 5),
   
   // BARRIERS
-  barrier('Handle visa application rejections', 'appeals and reapplications needed', 'execute', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS),
-  barrier('Navigate changing immigration policies', 'rules shift with political changes', 'monitor', 'head_of_legal', MAIN_JOB_TITLES.NAVIGATE_VISAS),
+  barrier('Handle visa application rejections', 'execute', 'hr_manager', MAIN_JOB_TITLES.NAVIGATE_VISAS, 8, 3),
+  barrier('Navigate changing immigration policies', 'monitor', 'head_of_legal', MAIN_JOB_TITLES.NAVIGATE_VISAS, 7, 3),
   
   // EMOTIONAL
   { title: 'Avoid immigration compliance violations', description: 'Prevent issues that could result in fines or bans', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'emotional', notes: 'barrier: complex and changing regulations', importance: 9, satisfaction: 3, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.NAVIGATE_VISAS },
@@ -301,12 +301,12 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   { title: 'Build internal communications platform', description: 'Implement tools for async global communication', level: 2, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
   
   // OUTCOMES
-  outcome('Achieve high engagement scores globally', 'maintain strong culture metrics in all regions', 'monitor', 'hr_manager', MAIN_JOB_TITLES.CREATE_CULTURE),
-  outcome('Reduce cultural friction in teams', 'smooth collaboration across cultures', 'execute', 'hiring_manager', MAIN_JOB_TITLES.CREATE_CULTURE),
+  outcome('Achieve high engagement scores globally', 'monitor', 'hr_manager', MAIN_JOB_TITLES.CREATE_CULTURE, 9, 4),
+  outcome('Reduce cultural friction in teams', 'execute', 'hiring_manager', MAIN_JOB_TITLES.CREATE_CULTURE, 8, 5),
   
   // BARRIERS
-  barrier('Bridge language and communication gaps', 'nuances lost in translation', 'execute', 'hr_manager', MAIN_JOB_TITLES.CREATE_CULTURE),
-  barrier('Overcome time zone challenges for meetings', 'finding convenient times for all', 'execute', 'ceo', MAIN_JOB_TITLES.CREATE_CULTURE),
+  barrier('Bridge language and communication gaps', 'execute', 'hr_manager', MAIN_JOB_TITLES.CREATE_CULTURE, 8, 3),
+  barrier('Overcome time zone challenges for meetings', 'execute', 'ceo', MAIN_JOB_TITLES.CREATE_CULTURE, 7, 4),
   
   // EMOTIONAL
   { title: 'Feel connected despite physical distance', description: 'Employees feel part of something bigger', level: 1, parent_id: null, icp: 'ceo', job_type: 'emotional', notes: '', importance: 8, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.CREATE_CULTURE },
@@ -330,12 +330,12 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   { title: 'Create remote performance dashboards', description: 'Build visibility into team productivity metrics', level: 2, parent_id: null, icp: 'hiring_manager', job_type: 'functional', notes: '', importance: 5, satisfaction: 3, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MONITOR_PERFORMANCE },
   
   // OUTCOMES
-  outcome('Achieve consistent performance standards globally', 'same expectations across all locations', 'execute', 'hr_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE),
-  outcome('Identify high performers regardless of location', 'fair recognition across regions', 'monitor', 'hiring_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE),
+  outcome('Achieve consistent performance standards globally', 'execute', 'hr_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 9, 4),
+  outcome('Identify high performers regardless of location', 'monitor', 'hiring_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 8, 4),
   
   // BARRIERS
-  barrier('Address performance issues remotely', 'difficult conversations harder at distance', 'execute', 'hiring_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE),
-  barrier('Account for cultural differences in feedback', 'direct vs indirect communication styles', 'prepare', 'hr_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE),
+  barrier('Address performance issues remotely', 'execute', 'hiring_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 8, 3),
+  barrier('Account for cultural differences in feedback', 'prepare', 'hr_manager', MAIN_JOB_TITLES.MONITOR_PERFORMANCE, 7, 4),
   
   // EMOTIONAL
   { title: 'Feel trusted while working remotely', description: 'Employees feel empowered not surveilled', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'emotional', notes: '', importance: 8, satisfaction: 5, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.MONITOR_PERFORMANCE },
@@ -358,12 +358,12 @@ export const sampleJobs: Omit<Job, 'id'>[] = [
   { title: 'Create termination documentation templates', description: 'Build country-specific termination letter templates', level: 2, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
   
   // OUTCOMES
-  outcome('Complete terminations without legal claims', 'clean separations in all cases', 'conclude', 'head_of_legal', MAIN_JOB_TITLES.HANDLE_TERMINATIONS),
-  outcome('Protect company intellectual property', 'secure return of all assets and access', 'execute', 'head_of_legal', MAIN_JOB_TITLES.HANDLE_TERMINATIONS),
+  outcome('Complete terminations without legal claims', 'conclude', 'head_of_legal', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 10, 5),
+  outcome('Protect company intellectual property', 'execute', 'head_of_legal', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 9, 5),
   
   // BARRIERS
-  barrier('Navigate complex severance requirements', 'generous mandatory payouts in some countries', 'prepare', 'head_of_finance', MAIN_JOB_TITLES.HANDLE_TERMINATIONS),
-  barrier('Handle disputed terminations internationally', 'legal processes vary significantly', 'execute', 'head_of_legal', MAIN_JOB_TITLES.HANDLE_TERMINATIONS),
+  barrier('Navigate complex severance requirements', 'prepare', 'head_of_finance', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 8, 3),
+  barrier('Handle disputed terminations internationally', 'execute', 'head_of_legal', MAIN_JOB_TITLES.HANDLE_TERMINATIONS, 9, 3),
   
   // EMOTIONAL
   { title: 'Avoid wrongful termination lawsuits', description: 'Prevent legal action from former employees', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'emotional', notes: 'risk: varies greatly by country', importance: 9, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.HANDLE_TERMINATIONS },
