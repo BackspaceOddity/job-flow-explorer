@@ -51,6 +51,16 @@ const JOB_TYPE_COLORS: Record<JobType, string> = {
   social: 'bg-[hsl(var(--job-social))]',
 };
 
+// Category-specific colors (distinct from job type colors)
+const CATEGORY_COLORS: Record<RowCategory, { bg: string; text: string }> = {
+  steps: { bg: 'bg-cyan-600', text: 'text-white' },
+  outcomes: { bg: 'bg-emerald-600', text: 'text-white' },
+  barriers: { bg: 'bg-rose-700', text: 'text-white' },
+  differentiators: { bg: 'bg-violet-600', text: 'text-white' },
+  emotional: { bg: 'bg-pink-600', text: 'text-white' },
+  social: { bg: 'bg-amber-600', text: 'text-white' },
+};
+
 // List View Component
 function JobListView({ 
   jobs, 
@@ -388,14 +398,14 @@ export function JobMapView({ className }: JobMapViewProps) {
         
         {/* Canvas View */}
         {viewMode === 'canvas' && (
-        <div className="p-4 min-w-[1200px] pb-8">
+        <div className="p-4 pb-8">
           {/* Job Map Grid */}
-          <div>
-            <table className="w-full border-collapse">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse min-w-[1200px]">
               <thead>
                 {/* Phase headers */}
                 <tr>
-                  <th className="w-40 min-w-[160px]" />
+                  <th className="w-40 min-w-[160px] sticky left-0 z-20 bg-background" />
                   {PHASES.map(phase => (
                     <th
                       key={phase.id}
@@ -413,7 +423,7 @@ export function JobMapView({ className }: JobMapViewProps) {
                 </tr>
                 {/* Stage headers */}
                 <tr>
-                  <th className="w-40 min-w-[160px] p-2 text-xs text-muted-foreground border border-border text-left">
+                  <th className="w-40 min-w-[160px] p-2 text-xs text-muted-foreground border border-border text-left sticky left-0 z-20 bg-background">
                     Category
                   </th>
                   {(Object.keys(JOB_STAGE_CONFIG) as JobStage[]).map(stage => (
@@ -429,9 +439,9 @@ export function JobMapView({ className }: JobMapViewProps) {
               <tbody>
                 {ROW_ORDER.map(category => (
                   <tr key={category}>
-                    <td className="p-2 border border-border bg-secondary/20">
+                    <td className="p-2 border border-border bg-secondary/50 sticky left-0 z-10">
                       <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground">
+                        <span className={cn("p-1 rounded", CATEGORY_COLORS[category].bg, CATEGORY_COLORS[category].text)}>
                           {ROW_CONFIG[category].icon}
                         </span>
                         <div>
@@ -466,8 +476,9 @@ export function JobMapView({ className }: JobMapViewProps) {
                                           'w-full text-left p-2 rounded text-xs transition-all',
                                           'hover:ring-2 hover:ring-primary/50 hover:scale-[1.02]',
                                           state.viewState.selectedNodeId === job.id && 'ring-2 ring-primary',
-                                          JOB_TYPE_COLORS[job.job_type],
-                                          'text-white shadow-sm'
+                                          CATEGORY_COLORS[category].bg,
+                                          CATEGORY_COLORS[category].text,
+                                          'shadow-sm'
                                         )}
                                         onClick={() => setSelectedNode(job.id)}
                                       >
