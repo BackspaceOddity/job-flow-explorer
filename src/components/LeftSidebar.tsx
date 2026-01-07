@@ -34,7 +34,7 @@ interface LeftSidebarProps {
 }
 
 export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, onAnalyzeInterview, className }: LeftSidebarProps) {
-  const { state, setSelectedNode, setFilters, uniqueLevels, clearAll, resetToSampleData } = useGraph();
+  const { state, setSelectedNode, setFilters, uniqueLevels, clearAll, resetToSampleData, filteredData } = useGraph();
   const { filters } = state.viewState;
   
   const [jobsOpen, setJobsOpen] = useState(true);
@@ -191,16 +191,16 @@ export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, onAnaly
           {/* Jobs List */}
           <Collapsible open={jobsOpen} onOpenChange={setJobsOpen}>
             <CollapsibleTrigger className="flex items-center justify-between w-full py-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-              <span>Jobs ({state.jobs.length})</span>
+              <span>Jobs ({filteredData.jobs.length}{filteredData.jobs.length !== state.jobs.length ? ` / ${state.jobs.length}` : ''})</span>
               {jobsOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-1 pt-2">
-              {state.jobs.length === 0 ? (
+              {filteredData.jobs.length === 0 ? (
                 <p className="text-sm text-muted-foreground py-4 text-center">
-                  No jobs yet. Create one to get started!
+                  {state.jobs.length === 0 ? 'No jobs yet. Create one to get started!' : 'No jobs match current filters.'}
                 </p>
               ) : (
-                state.jobs.slice(0, 20).map(job => (
+                filteredData.jobs.slice(0, 20).map(job => (
                   <button
                     key={job.id}
                     className={cn(
@@ -223,9 +223,9 @@ export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, onAnaly
                   </button>
                 ))
               )}
-              {state.jobs.length > 20 && (
+              {filteredData.jobs.length > 20 && (
                 <p className="text-xs text-muted-foreground text-center py-2">
-                  +{state.jobs.length - 20} more jobs
+                  +{filteredData.jobs.length - 20} more jobs
                 </p>
               )}
             </CollapsibleContent>
