@@ -8,13 +8,13 @@ import { EdgeFormDialog } from '@/components/EdgeFormDialog';
 import { ImportExportDialog } from '@/components/ImportExportDialog';
 import { InterviewAnalysisDialog } from '@/components/InterviewAnalysisDialog';
 import { OpportunityMatrix } from '@/components/OpportunityMatrix';
-import { JobMapView } from '@/components/JobMapView';
+import { JobMapView, JobListView } from '@/components/JobMapView';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { RefreshCw, Route, Repeat, X, Sparkles, Target, TrendingUp, Network, Map, Grid3X3 } from 'lucide-react';
+import { RefreshCw, Route, Repeat, X, Sparkles, Target, TrendingUp, Network, Map, Grid3X3, List } from 'lucide-react';
 import { sampleJobs, generateSampleEdges } from '@/data/sampleData';
 import { toast } from 'sonner';
 import { computeOpportunityScore } from '@/lib/opportunityScoring';
@@ -28,6 +28,7 @@ function GraphApp() {
     setSubgraph, 
     setActiveView,
     setSelectedMainJob,
+    setSelectedNode,
     addJob, 
     addEdge 
   } = useGraph();
@@ -97,6 +98,10 @@ function GraphApp() {
             {/* View Tabs */}
             <Tabs value={activeView} onValueChange={(v) => setActiveView(v as typeof activeView)}>
               <TabsList className="h-8">
+                <TabsTrigger value="list" className="text-xs px-3">
+                  <List className="w-3.5 h-3.5 mr-1.5" />
+                  List
+                </TabsTrigger>
                 <TabsTrigger value="graph" className="text-xs px-3">
                   <Network className="w-3.5 h-3.5 mr-1.5" />
                   Graph
@@ -169,6 +174,16 @@ function GraphApp() {
 
         {/* Main View Area */}
         <div className="flex-1 relative overflow-hidden">
+          {activeView === 'list' && (
+            <JobListView 
+              jobs={state.jobs}
+              l0Jobs={state.jobs.filter(j => j.level === 0)}
+              selectedNodeId={state.viewState.selectedNodeId}
+              onSelectJob={setSelectedNode}
+              className="h-full overflow-auto"
+            />
+          )}
+          
           {activeView === 'graph' && (
             <>
               <GraphVisualization />
