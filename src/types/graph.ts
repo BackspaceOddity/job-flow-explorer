@@ -61,6 +61,15 @@ export interface NodeMetrics {
   betweennessCentrality: number;
   closenessCentrality: number;
   pageRank: number;
+  // New graph theory metrics
+  eigenvectorCentrality: number;
+  clusteringCoefficient: number;
+  eccentricity: number;
+  katzCentrality: number;
+  hubScore: number;
+  authorityScore: number;
+  communityId: number | null;
+  // Existing
   isInCycle: boolean;
   sccId: number | null;
   tensionScore: number;
@@ -73,6 +82,15 @@ export interface EdgeMetrics {
   isOnCriticalPath: boolean;
 }
 
+export interface GlobalGraphMetrics {
+  density: number;
+  diameter: number;
+  radius: number;
+  averageClusteringCoefficient: number;
+  numberOfCommunities: number;
+  averagePathLength: number;
+}
+
 export interface GraphMetrics {
   nodes: Map<string, NodeMetrics>;
   edges: Map<string, EdgeMetrics>;
@@ -81,6 +99,7 @@ export interface GraphMetrics {
   cycles: string[][];
   topTensionNodes: string[];
   topUnderservedNodes: string[];
+  globalMetrics: GlobalGraphMetrics;
 }
 
 export interface GraphFilters {
@@ -107,6 +126,7 @@ export interface ViewState {
   directionMode: DirectionMode;
   activeView: ActiveView;
   selectedMainJobId: string | null; // For job map view
+  isLayoutFrozen: boolean; // For graph stabilization
 }
 
 // Import/Export JSON schema

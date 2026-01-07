@@ -1,6 +1,6 @@
 // Graph algorithms for computing metrics and analysis
 
-import type { Job, Edge, NodeMetrics, EdgeMetrics, GraphMetrics } from '@/types/graph';
+import type { Job, Edge, NodeMetrics, EdgeMetrics, GraphMetrics, GlobalGraphMetrics } from '@/types/graph';
 
 // Adjacency list representation
 interface AdjacencyList {
@@ -25,6 +25,19 @@ function buildAdjacencyList(jobs: Job[], edges: Edge[]): AdjacencyList {
   });
   
   return { outgoing, incoming };
+}
+
+// Build undirected adjacency for clustering coefficient
+function buildUndirectedAdjacency(jobs: Job[], edges: Edge[]): Map<string, Set<string>> {
+  const adj = new Map<string, Set<string>>();
+  jobs.forEach(job => adj.set(job.id, new Set()));
+  
+  edges.forEach(edge => {
+    adj.get(edge.source_id)?.add(edge.target_id);
+    adj.get(edge.target_id)?.add(edge.source_id);
+  });
+  
+  return adj;
 }
 
 // Compute in-degree and out-degree for all nodes
@@ -184,6 +197,282 @@ function computePageRank(jobs: Job[], adj: AdjacencyList, damping = 0.85, iterat
   }
   
   return pageRank;
+}
+
+// Eigenvector Centrality - measures influence based on neighbor importance
+function computeEigenvectorCentrality(jobs: Job[], adj: AdjacencyList, iterations = 100, tolerance = 1e-6): Map<string, number> {
+  const n = jobs.length;
+  if (n === 0) return new Map();
+  
+  const centrality = new Map<string, number>();
+  const newCentrality = new Map<string, number>();
+  
+  // Initialize with equal values
+  jobs.forEach(job => centrality.set(job.id, 1 / Math.sqrt(n)));
+  
+  for (let iter = 0; iter < iterations; iter++) {
+    // Compute new centrality scores
+    jobs.forEach(job => {
+      let sum = 0;
+      const incoming = adj.incoming.get(job.id) || [];
+      for (const neighbor of incoming) {
+        sum += centrality.get(neighbor) || 0;
+      }
+      newCentrality.set(job.id, sum);
+    });
+    
+    // Normalize
+    let norm = 0;
+    newCentrality.forEach(val => norm += val * val);
+    norm = Math.sqrt(norm) || 1;
+    
+    let diff = 0;
+    jobs.forEach(job => {
+      const normalized = (newCentrality.get(job.id) || 0) / norm;
+      diff += Math.abs(normalized - (centrality.get(job.id) || 0));
+      centrality.set(job.id, normalized);
+    });
+    
+    if (diff < tolerance) break;
+  }
+  
+  return centrality;
+}
+
+// Clustering Coefficient - how clustered are a node's neighbors
+function computeClusteringCoefficient(jobs: Job[], edges: Edge[]): Map<string, number> {
+  const undirectedAdj = buildUndirectedAdjacency(jobs, edges);
+  const clustering = new Map<string, number>();
+  
+  jobs.forEach(job => {
+    const neighbors = Array.from(undirectedAdj.get(job.id) || []);
+    const k = neighbors.length;
+    
+    if (k < 2) {
+      clustering.set(job.id, 0);
+      return;
+    }
+    
+    // Count edges between neighbors
+    let triangles = 0;
+    for (let i = 0; i < neighbors.length; i++) {
+      for (let j = i + 1; j < neighbors.length; j++) {
+        if (undirectedAdj.get(neighbors[i])?.has(neighbors[j])) {
+          triangles++;
+        }
+      }
+    }
+    
+    // Clustering coefficient = 2 * triangles / (k * (k-1))
+    const maxTriangles = (k * (k - 1)) / 2;
+    clustering.set(job.id, triangles / maxTriangles);
+  });
+  
+  return clustering;
+}
+
+// Graph Density - edge density metric
+function computeGraphDensity(jobs: Job[], edges: Edge[]): number {
+  const n = jobs.length;
+  if (n <= 1) return 0;
+  
+  // For directed graph: density = edges / (n * (n - 1))
+  const maxEdges = n * (n - 1);
+  return edges.length / maxEdges;
+}
+
+// Eccentricity - maximum distance from node to any other node
+function computeEccentricity(jobs: Job[], adj: AdjacencyList): Map<string, number> {
+  const eccentricity = new Map<string, number>();
+  
+  jobs.forEach(source => {
+    const dist = new Map<string, number>();
+    jobs.forEach(job => dist.set(job.id, Infinity));
+    dist.set(source.id, 0);
+    
+    const queue: string[] = [source.id];
+    
+    while (queue.length > 0) {
+      const v = queue.shift()!;
+      const neighbors = [...(adj.outgoing.get(v) || []), ...(adj.incoming.get(v) || [])];
+      
+      for (const w of neighbors) {
+        if (dist.get(w) === Infinity) {
+          dist.set(w, dist.get(v)! + 1);
+          queue.push(w);
+        }
+      }
+    }
+    
+    // Max distance to any reachable node
+    let maxDist = 0;
+    dist.forEach(d => {
+      if (d !== Infinity && d > maxDist) maxDist = d;
+    });
+    
+    eccentricity.set(source.id, maxDist);
+  });
+  
+  return eccentricity;
+}
+
+// Diameter - max eccentricity (longest shortest path)
+function computeDiameter(eccentricities: Map<string, number>): number {
+  let max = 0;
+  eccentricities.forEach(e => {
+    if (e > max) max = e;
+  });
+  return max;
+}
+
+// Radius - min eccentricity
+function computeRadius(eccentricities: Map<string, number>): number {
+  let min = Infinity;
+  eccentricities.forEach(e => {
+    if (e > 0 && e < min) min = e;
+  });
+  return min === Infinity ? 0 : min;
+}
+
+// Katz Centrality - considers all paths with decay
+function computeKatzCentrality(jobs: Job[], adj: AdjacencyList, alpha = 0.1, beta = 1, iterations = 100): Map<string, number> {
+  const n = jobs.length;
+  if (n === 0) return new Map();
+  
+  const katz = new Map<string, number>();
+  const newKatz = new Map<string, number>();
+  
+  // Initialize
+  jobs.forEach(job => katz.set(job.id, beta));
+  
+  for (let iter = 0; iter < iterations; iter++) {
+    jobs.forEach(job => {
+      let sum = beta;
+      const incoming = adj.incoming.get(job.id) || [];
+      for (const neighbor of incoming) {
+        sum += alpha * (katz.get(neighbor) || 0);
+      }
+      newKatz.set(job.id, sum);
+    });
+    
+    // Copy
+    jobs.forEach(job => katz.set(job.id, newKatz.get(job.id) || 0));
+  }
+  
+  // Normalize
+  let maxKatz = 0;
+  katz.forEach(val => { if (val > maxKatz) maxKatz = val; });
+  if (maxKatz > 0) {
+    katz.forEach((val, key) => katz.set(key, val / maxKatz));
+  }
+  
+  return katz;
+}
+
+// HITS Algorithm - Hubs and Authorities
+function computeHITS(jobs: Job[], adj: AdjacencyList, iterations = 100): { hubs: Map<string, number>; authorities: Map<string, number> } {
+  const n = jobs.length;
+  if (n === 0) return { hubs: new Map(), authorities: new Map() };
+  
+  const hubs = new Map<string, number>();
+  const authorities = new Map<string, number>();
+  
+  // Initialize
+  jobs.forEach(job => {
+    hubs.set(job.id, 1);
+    authorities.set(job.id, 1);
+  });
+  
+  for (let iter = 0; iter < iterations; iter++) {
+    // Update authority scores: sum of hub scores of incoming nodes
+    jobs.forEach(job => {
+      let sum = 0;
+      const incoming = adj.incoming.get(job.id) || [];
+      for (const neighbor of incoming) {
+        sum += hubs.get(neighbor) || 0;
+      }
+      authorities.set(job.id, sum);
+    });
+    
+    // Normalize authorities
+    let authNorm = 0;
+    authorities.forEach(val => authNorm += val * val);
+    authNorm = Math.sqrt(authNorm) || 1;
+    authorities.forEach((val, key) => authorities.set(key, val / authNorm));
+    
+    // Update hub scores: sum of authority scores of outgoing nodes
+    jobs.forEach(job => {
+      let sum = 0;
+      const outgoing = adj.outgoing.get(job.id) || [];
+      for (const neighbor of outgoing) {
+        sum += authorities.get(neighbor) || 0;
+      }
+      hubs.set(job.id, sum);
+    });
+    
+    // Normalize hubs
+    let hubNorm = 0;
+    hubs.forEach(val => hubNorm += val * val);
+    hubNorm = Math.sqrt(hubNorm) || 1;
+    hubs.forEach((val, key) => hubs.set(key, val / hubNorm));
+  }
+  
+  return { hubs, authorities };
+}
+
+// Community Detection using Label Propagation
+function detectCommunities(jobs: Job[], edges: Edge[]): Map<string, number> {
+  const undirectedAdj = buildUndirectedAdjacency(jobs, edges);
+  const labels = new Map<string, number>();
+  
+  // Initialize each node with unique label
+  jobs.forEach((job, idx) => labels.set(job.id, idx));
+  
+  const maxIterations = 100;
+  for (let iter = 0; iter < maxIterations; iter++) {
+    let changed = false;
+    
+    // Shuffle order for random propagation
+    const shuffled = [...jobs].sort(() => Math.random() - 0.5);
+    
+    for (const job of shuffled) {
+      const neighbors = undirectedAdj.get(job.id) || new Set();
+      if (neighbors.size === 0) continue;
+      
+      // Count neighbor labels
+      const labelCounts = new Map<number, number>();
+      neighbors.forEach(neighbor => {
+        const label = labels.get(neighbor)!;
+        labelCounts.set(label, (labelCounts.get(label) || 0) + 1);
+      });
+      
+      // Find most common label
+      let maxCount = 0;
+      let maxLabel = labels.get(job.id)!;
+      labelCounts.forEach((count, label) => {
+        if (count > maxCount) {
+          maxCount = count;
+          maxLabel = label;
+        }
+      });
+      
+      if (labels.get(job.id) !== maxLabel) {
+        labels.set(job.id, maxLabel);
+        changed = true;
+      }
+    }
+    
+    if (!changed) break;
+  }
+  
+  // Normalize labels to sequential IDs
+  const uniqueLabels = [...new Set(labels.values())];
+  const labelMap = new Map(uniqueLabels.map((label, idx) => [label, idx]));
+  labels.forEach((label, nodeId) => {
+    labels.set(nodeId, labelMap.get(label)!);
+  });
+  
+  return labels;
 }
 
 // Tarjan's algorithm for strongly connected components
@@ -542,6 +831,14 @@ export function computeGraphMetrics(jobs: Job[], edges: Edge[]): GraphMetrics {
       cycles: [],
       topTensionNodes: [],
       topUnderservedNodes: [],
+      globalMetrics: {
+        density: 0,
+        diameter: 0,
+        radius: 0,
+        averageClusteringCoefficient: 0,
+        numberOfCommunities: 0,
+        averagePathLength: 0,
+      },
     };
   }
   
@@ -554,6 +851,25 @@ export function computeGraphMetrics(jobs: Job[], edges: Edge[]): GraphMetrics {
   const cycles = detectCycles(jobs, edges, sccs);
   const criticalPath = computeCriticalPath(jobs, edges, adj, sccs);
   const edgeBetweenness = computeEdgeBetweenness(jobs, edges, adj);
+  
+  // New metrics
+  const eigenvector = computeEigenvectorCentrality(jobs, adj);
+  const clustering = computeClusteringCoefficient(jobs, edges);
+  const eccentricity = computeEccentricity(jobs, adj);
+  const katz = computeKatzCentrality(jobs, adj);
+  const hits = computeHITS(jobs, adj);
+  const communities = detectCommunities(jobs, edges);
+  
+  // Global metrics
+  const density = computeGraphDensity(jobs, edges);
+  const diameter = computeDiameter(eccentricity);
+  const radius = computeRadius(eccentricity);
+  
+  let avgClustering = 0;
+  clustering.forEach(val => avgClustering += val);
+  avgClustering = jobs.length > 0 ? avgClustering / jobs.length : 0;
+  
+  const uniqueCommunities = new Set(communities.values());
   
   // Find nodes in cycles
   const nodesInCycles = new Set<string>();
@@ -583,6 +899,13 @@ export function computeGraphMetrics(jobs: Job[], edges: Edge[]): GraphMetrics {
       betweennessCentrality: Math.round((betweenness.get(job.id) || 0) * 1000) / 1000,
       closenessCentrality: Math.round((closeness.get(job.id) || 0) * 1000) / 1000,
       pageRank: Math.round((pageRank.get(job.id) || 0) * 1000) / 1000,
+      eigenvectorCentrality: Math.round((eigenvector.get(job.id) || 0) * 1000) / 1000,
+      clusteringCoefficient: Math.round((clustering.get(job.id) || 0) * 1000) / 1000,
+      eccentricity: eccentricity.get(job.id) || 0,
+      katzCentrality: Math.round((katz.get(job.id) || 0) * 1000) / 1000,
+      hubScore: Math.round((hits.hubs.get(job.id) || 0) * 1000) / 1000,
+      authorityScore: Math.round((hits.authorities.get(job.id) || 0) * 1000) / 1000,
+      communityId: communities.get(job.id) ?? null,
       isInCycle: nodesInCycles.has(job.id),
       sccId: nodeToSCC.get(job.id) ?? null,
       tensionScore: tensionScores.get(job.id) || 0,
@@ -607,6 +930,17 @@ export function computeGraphMetrics(jobs: Job[], edges: Edge[]): GraphMetrics {
     .slice(0, 10)
     .map(([id]) => id);
   
+  // Calculate average path length
+  let totalPathLength = 0;
+  let pathCount = 0;
+  eccentricity.forEach(e => {
+    if (e > 0) {
+      totalPathLength += e;
+      pathCount++;
+    }
+  });
+  const averagePathLength = pathCount > 0 ? totalPathLength / pathCount : 0;
+  
   return {
     nodes: nodeMetrics,
     edges: edgeMetricsMap,
@@ -615,6 +949,14 @@ export function computeGraphMetrics(jobs: Job[], edges: Edge[]): GraphMetrics {
     cycles,
     topTensionNodes: sortedByTension,
     topUnderservedNodes: [], // Populated by context with opportunity scoring
+    globalMetrics: {
+      density: Math.round(density * 1000) / 1000,
+      diameter,
+      radius,
+      averageClusteringCoefficient: Math.round(avgClustering * 1000) / 1000,
+      numberOfCommunities: uniqueCommunities.size,
+      averagePathLength: Math.round(averagePathLength * 100) / 100,
+    },
   };
 }
 
