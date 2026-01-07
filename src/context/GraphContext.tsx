@@ -541,6 +541,7 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
     setDirectionMode,
     setActiveView,
     setSelectedMainJob,
+    setLayoutFrozen,
     filteredData,
     uniqueLevels,
   };
