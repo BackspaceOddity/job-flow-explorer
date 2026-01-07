@@ -6,6 +6,8 @@ import { JOB_STAGE_CONFIG, PHASES, computeOpportunityScore, isUnderserved } from
 import { ICPBadge } from '@/components/ICPBadge';
 
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { TrendingUp, AlertTriangle, Target, Zap, Heart, Users } from 'lucide-react';
 
 interface JobMapViewProps {
@@ -33,16 +35,22 @@ const JOB_TYPE_COLORS: Record<JobType, string> = {
 };
 
 export function JobMapView({ className }: JobMapViewProps) {
-  const { state, setSelectedNode } = useGraph();
-  const { filters } = state.viewState;
+  const { state, setSelectedNode, setSelectedMainJob, filteredData } = useGraph();
+  const { filters, selectedMainJobId } = state.viewState;
   
   // Filter jobs by selected ICP from sidebar
   const selectedICP: ICP | null = filters.icps.length === 1 ? filters.icps[0] : null;
   
-  // Get jobs for the selected ICP (or all jobs if no ICP selected)
-  const filteredJobs = selectedICP
-    ? state.jobs.filter(j => j.icp === selectedICP)
-    : state.jobs;
+  // Get L0 jobs for the Main Job dropdown (from all jobs, filtered by ICP if selected)
+  const l0Jobs = state.jobs.filter(j => 
+    j.level === 0 && (!selectedICP || j.icp === selectedICP)
+  );
+  
+  // Use filteredData which respects all sidebar filters, then apply Main Job filter
+  const baseJobs = filteredData.jobs;
+  const filteredJobs = selectedMainJobId
+    ? baseJobs.filter(j => j.main_job_id === selectedMainJobId || j.id === selectedMainJobId)
+    : baseJobs;
   
   // Categorize jobs into rows
   const getJobsForCell = (category: RowCategory, stage: JobStage) => {
@@ -88,7 +96,7 @@ export function JobMapView({ className }: JobMapViewProps) {
     <div className={cn('flex flex-col h-full bg-background', className)}>
       {/* Header */}
       <div className="p-4 border-b border-border">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="font-semibold text-foreground">JTBD Canvas</h2>
             <p className="text-xs text-muted-foreground mt-1">
@@ -96,16 +104,32 @@ export function JobMapView({ className }: JobMapViewProps) {
             </p>
           </div>
           
-          {selectedICP ? (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Filtered by:</span>
-              <ICPBadge icp={selectedICP} size="md" />
-            </div>
-          ) : (
-            <Badge variant="secondary" className="text-xs">
-              All ICPs • Select one ICP in sidebar to filter
-            </Badge>
-          )}
+          <div className="flex items-center gap-3">
+            {/* Main Job Selector */}
+            <Select 
+              value={selectedMainJobId || 'all'} 
+              onValueChange={(val) => setSelectedMainJob(val === 'all' ? null : val)}
+            >
+              <SelectTrigger className="w-[280px] bg-background">
+                <SelectValue placeholder="Select Main Job..." />
+              </SelectTrigger>
+              <SelectContent className="bg-popover z-50">
+                <SelectItem value="all">All Main Jobs</SelectItem>
+                {l0Jobs.map(job => (
+                  <SelectItem key={job.id} value={job.id}>
+                    {job.title.length > 40 ? job.title.slice(0, 40) + '...' : job.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            {selectedICP && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">ICP:</span>
+                <ICPBadge icp={selectedICP} size="md" />
+              </div>
+            )}
+          </div>
         </div>
       </div>
       
@@ -141,7 +165,7 @@ export function JobMapView({ className }: JobMapViewProps) {
                   {(Object.keys(JOB_STAGE_CONFIG) as JobStage[]).map(stage => (
                     <th
                       key={stage}
-                      className="p-2 text-xs font-medium text-foreground border border-border min-w-[110px]"
+                      className="p-2 text-xs font-medium text-foreground border border-border min-w-[140px]"
                     >
                       {JOB_STAGE_CONFIG[stage].label}
                     </th>
@@ -173,54 +197,62 @@ export function JobMapView({ className }: JobMapViewProps) {
                           key={`${category}-${stage}`}
                           className="p-1.5 border border-border align-top min-h-[80px]"
                         >
-                          <div className="space-y-1">
-                            {cellJobs.map(job => {
-                              const hasScores = job.importance !== null && job.satisfaction !== null;
-                              const underserved = hasScores && isUnderserved(job.importance!, job.satisfaction!);
-                              const score = hasScores ? computeOpportunityScore(job.importance!, job.satisfaction!) : null;
-                              
-                              return (
-                                <button
-                                  key={job.id}
-                                  className={cn(
-                                    'w-full text-left p-2 rounded text-xs transition-all',
-                                    'hover:ring-2 hover:ring-primary/50 hover:scale-[1.02]',
-                                    state.viewState.selectedNodeId === job.id && 'ring-2 ring-primary',
-                                    JOB_TYPE_COLORS[job.job_type],
-                                    'text-white shadow-sm'
-                                  )}
-                                  onClick={() => setSelectedNode(job.id)}
-                                >
-                                  <p className="font-medium line-clamp-2 leading-tight">{job.title}</p>
-                                  <div className="flex items-center gap-1 mt-1">
-                                    {!selectedICP && (
-                                      <span className="text-[9px] opacity-75 bg-black/20 px-1 rounded">
-                                        {job.icp.replace('_', ' ').toUpperCase().slice(0, 3)}
-                                      </span>
-                                    )}
-                                    {hasScores && (
-                                      <span className="text-[9px] opacity-80 bg-black/20 px-1 rounded">
-                                        I:{job.importance} S:{job.satisfaction}
-                                      </span>
-                                    )}
-                                    {underserved && (
-                                      <AlertTriangle className="w-3 h-3 text-white/90" />
-                                    )}
-                                    {score !== null && score >= 12 && (
-                                      <span className="text-[9px] font-bold bg-white/20 px-1 rounded">
-                                        {score}
-                                      </span>
-                                    )}
-                                  </div>
-                                </button>
-                              );
-                            })}
-                            {cellJobs.length === 0 && (
-                              <div className="h-12 flex items-center justify-center text-muted-foreground/30 text-xs">
-                                —
-                              </div>
-                            )}
-                          </div>
+                          <TooltipProvider>
+                            <div className="space-y-1">
+                              {cellJobs.map(job => {
+                                const hasScores = job.importance !== null && job.satisfaction !== null;
+                                const underserved = hasScores && isUnderserved(job.importance!, job.satisfaction!);
+                                const score = hasScores ? computeOpportunityScore(job.importance!, job.satisfaction!) : null;
+                                
+                                return (
+                                  <Tooltip key={job.id}>
+                                    <TooltipTrigger asChild>
+                                      <button
+                                        className={cn(
+                                          'w-full text-left p-2 rounded text-xs transition-all',
+                                          'hover:ring-2 hover:ring-primary/50 hover:scale-[1.02]',
+                                          state.viewState.selectedNodeId === job.id && 'ring-2 ring-primary',
+                                          JOB_TYPE_COLORS[job.job_type],
+                                          'text-white shadow-sm'
+                                        )}
+                                        onClick={() => setSelectedNode(job.id)}
+                                      >
+                                        <p className="font-medium line-clamp-2 leading-tight text-[11px]">{job.title}</p>
+                                        <div className="flex items-center gap-1 mt-1 flex-wrap">
+                                          {!selectedICP && (
+                                            <span className="text-[9px] opacity-75 bg-black/20 px-1 rounded">
+                                              {job.icp.replace('_', ' ').toUpperCase().slice(0, 3)}
+                                            </span>
+                                          )}
+                                          {hasScores && (
+                                            <span className="text-[9px] opacity-80 bg-black/20 px-1 rounded">
+                                              I:{job.importance} S:{job.satisfaction}
+                                            </span>
+                                          )}
+                                          {underserved && (
+                                            <AlertTriangle className="w-3 h-3 text-white/90" />
+                                          )}
+                                          {score !== null && score >= 12 && (
+                                            <span className="text-[9px] font-bold bg-white/20 px-1 rounded">
+                                              {score}
+                                            </span>
+                                          )}
+                                        </div>
+                                      </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" className="max-w-xs bg-popover z-50">
+                                      <p className="text-sm">{job.title}</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                );
+                              })}
+                              {cellJobs.length === 0 && (
+                                <div className="h-12 flex items-center justify-center text-muted-foreground/30 text-xs">
+                                  —
+                                </div>
+                              )}
+                            </div>
+                          </TooltipProvider>
                         </td>
                       );
                     })}
