@@ -290,6 +290,7 @@ interface GraphContextValue {
   importData: (data: ImportData) => void;
   exportData: () => GraphData;
   clearAll: () => void;
+  resetToSampleData: () => void;
   // Metrics
   recomputeMetrics: () => void;
   // View state
@@ -412,6 +413,14 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'CLEAR_ALL' });
   }, []);
   
+  const resetToSampleData = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    const jobsWithIds: Job[] = sampleJobs.map(job => ({ ...job, id: uuidv4() }));
+    const resolvedJobs = resolveMainJobIds(jobsWithIds);
+    const edges = generateSampleEdges(resolvedJobs).map(e => ({ ...e, id: uuidv4() }));
+    dispatch({ type: 'LOAD_DATA', payload: { jobs: resolvedJobs, edges } });
+  }, []);
+  
   // Metrics
   const recomputeMetrics = useCallback(() => {
     const baseMetrics = computeGraphMetrics(state.jobs, state.edges);
@@ -530,6 +539,7 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
     importData,
     exportData,
     clearAll,
+    resetToSampleData,
     recomputeMetrics,
     setSelectedNode,
     setHoveredNode,

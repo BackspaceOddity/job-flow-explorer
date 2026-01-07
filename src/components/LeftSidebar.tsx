@@ -20,7 +20,8 @@ import {
   Filter,
   X,
   Trash2,
-  Sparkles
+  Sparkles,
+  RotateCcw
 } from 'lucide-react';
 import { JobType, ICP, ICP_OPTIONS } from '@/types/graph';
 
@@ -33,7 +34,7 @@ interface LeftSidebarProps {
 }
 
 export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, onAnalyzeInterview, className }: LeftSidebarProps) {
-  const { state, setSelectedNode, setFilters, uniqueLevels, clearAll } = useGraph();
+  const { state, setSelectedNode, setFilters, uniqueLevels, clearAll, resetToSampleData } = useGraph();
   const { filters } = state.viewState;
   
   const [jobsOpen, setJobsOpen] = useState(true);
@@ -267,7 +268,20 @@ export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, onAnaly
       </ScrollArea>
       
       {/* Footer */}
-      <div className="p-4 border-t border-sidebar-border">
+      <div className="p-4 border-t border-sidebar-border space-y-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full"
+          onClick={() => {
+            if (confirm('Reset to sample data? This will replace all current data.')) {
+              resetToSampleData();
+            }
+          }}
+        >
+          <RotateCcw className="w-4 h-4 mr-2" />
+          Reset to Sample Data
+        </Button>
         <Button
           variant="ghost"
           size="sm"
