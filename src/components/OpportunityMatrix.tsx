@@ -28,10 +28,10 @@ interface OpportunityMatrixProps {
 }
 
 export function OpportunityMatrix({ className, onJobSelect }: OpportunityMatrixProps) {
-  const { state, setSelectedNode } = useGraph();
+  const { state, setSelectedNode, filteredData } = useGraph();
   
-  // Filter jobs that have both importance and satisfaction
-  const scoredJobs = state.jobs.filter(
+  // Filter jobs that have both importance and satisfaction - use filteredData to respect filters
+  const scoredJobs = filteredData.jobs.filter(
     job => job.importance !== null && job.satisfaction !== null
   );
   
