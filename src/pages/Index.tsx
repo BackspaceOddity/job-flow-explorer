@@ -261,6 +261,7 @@ function GraphApp() {
   );
 }
 
+// Main entry point - GraphApp must be wrapped in GraphProvider
 export default function Index() {
   return (
     <GraphProvider>
