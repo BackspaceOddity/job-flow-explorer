@@ -41,7 +41,6 @@
     --job-functional: 199 89% 48%;
     --job-emotional: 340 82% 52%;
     --job-social: 38 92% 50%;
-    --job-other: 262 83% 58%;
 
     /* Graph colors */
     --edge-default: 224 15% 35%;
@@ -158,7 +157,7 @@
   }
   
   .job-other {
-    color: hsl(var(--job-other));
+    color: hsl(var(--muted-foreground));
   }
   
   .bg-job-functional {
@@ -171,10 +170,6 @@
   
   .bg-job-social {
     background-color: hsl(var(--job-social));
-  }
-  
-  .bg-job-other {
-    background-color: hsl(var(--job-other));
   }
   
   .tension-glow {

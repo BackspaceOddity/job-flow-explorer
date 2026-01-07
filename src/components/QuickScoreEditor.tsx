@@ -62,7 +62,7 @@ export function QuickScoreEditor({
           <span className={cn('text-muted-foreground', compact ? 'text-[10px]' : 'text-xs')}>
             Importance
           </span>
-          <span className={cn('font-mono font-medium', compact ? 'text-xs' : 'text-sm')}>
+          <span className={cn('font-mono font-medium shrink-0 min-w-[24px] text-right', compact ? 'text-xs' : 'text-sm')}>
             {importance ?? '—'}
           </span>
         </div>
@@ -88,7 +88,7 @@ export function QuickScoreEditor({
           <span className={cn('text-muted-foreground', compact ? 'text-[10px]' : 'text-xs')}>
             Satisfaction
           </span>
-          <span className={cn('font-mono font-medium', compact ? 'text-xs' : 'text-sm')}>
+          <span className={cn('font-mono font-medium shrink-0 min-w-[24px] text-right', compact ? 'text-xs' : 'text-sm')}>
             {satisfaction ?? '—'}
           </span>
         </div>

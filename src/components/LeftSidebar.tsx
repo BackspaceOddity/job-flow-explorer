@@ -40,7 +40,7 @@ export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, onAnaly
   const [filtersOpen, setFiltersOpen] = useState(true);
   const [edgesOpen, setEdgesOpen] = useState(false);
   
-  const jobTypes: JobType[] = ['functional', 'emotional', 'social', 'other'];
+  const jobTypes: JobType[] = ['functional', 'emotional', 'social'];
   
   const handleICPToggle = (icp: ICP) => {
     const newICPs = filters.icps.includes(icp)

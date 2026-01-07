@@ -1,6 +1,6 @@
 // Core types for Jobs Graph Mapper
 
-export type JobType = 'functional' | 'emotional' | 'social' | 'other';
+export type JobType = 'functional' | 'emotional' | 'social';
 
 export type ICP = 'ceo' | 'hr_manager' | 'head_of_finance' | 'hiring_manager' | 'head_of_legal';
 
