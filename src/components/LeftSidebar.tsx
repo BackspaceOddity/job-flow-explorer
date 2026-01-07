@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { JobTypeBadge, LevelBadge } from '@/components/JobTypeBadge';
+import { ICPBadge } from '@/components/ICPBadge';
 import { 
   Plus, 
   Link2, 
@@ -18,19 +19,21 @@ import {
   ChevronRight,
   Filter,
   X,
-  Trash2
+  Trash2,
+  Sparkles
 } from 'lucide-react';
-import { JobType } from '@/types/graph';
+import { JobType, ICP, ICP_OPTIONS } from '@/types/graph';
 
 interface LeftSidebarProps {
   onCreateJob: () => void;
   onCreateEdge: () => void;
   onImportExport: () => void;
+  onAnalyzeInterview: () => void;
   className?: string;
 }
 
-export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, className }: LeftSidebarProps) {
-  const { state, setSelectedNode, setFilters, uniqueRoles, uniqueLevels, clearAll } = useGraph();
+export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, onAnalyzeInterview, className }: LeftSidebarProps) {
+  const { state, setSelectedNode, setFilters, uniqueLevels, clearAll } = useGraph();
   const { filters } = state.viewState;
   
   const [jobsOpen, setJobsOpen] = useState(true);
@@ -39,11 +42,11 @@ export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, classNa
   
   const jobTypes: JobType[] = ['functional', 'emotional', 'social', 'other'];
   
-  const handleRoleToggle = (role: string) => {
-    const newRoles = filters.ownerRoles.includes(role)
-      ? filters.ownerRoles.filter(r => r !== role)
-      : [...filters.ownerRoles, role];
-    setFilters({ ownerRoles: newRoles });
+  const handleICPToggle = (icp: ICP) => {
+    const newICPs = filters.icps.includes(icp)
+      ? filters.icps.filter(i => i !== icp)
+      : [...filters.icps, icp];
+    setFilters({ icps: newICPs });
   };
   
   const handleTypeToggle = (type: JobType) => {
@@ -61,10 +64,10 @@ export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, classNa
   };
   
   const clearFilters = () => {
-    setFilters({ ownerRoles: [], jobTypes: [], levels: [], searchQuery: '' });
+    setFilters({ icps: [], jobTypes: [], levels: [], searchQuery: '' });
   };
   
-  const hasActiveFilters = filters.ownerRoles.length > 0 || 
+  const hasActiveFilters = filters.icps.length > 0 || 
     filters.jobTypes.length > 0 || 
     filters.levels.length > 0 || 
     filters.searchQuery.trim() !== '';
@@ -86,6 +89,10 @@ export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, classNa
           <Button size="sm" variant="ghost" onClick={onImportExport}>
             <Upload className="w-4 h-4 mr-1.5" />
             Import/Export
+          </Button>
+          <Button size="sm" variant="outline" onClick={onAnalyzeInterview}>
+            <Sparkles className="w-4 h-4 mr-1.5" />
+            Analyze
           </Button>
         </div>
       </div>
@@ -159,24 +166,22 @@ export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, classNa
                 </div>
               )}
               
-              {/* Roles */}
-              {uniqueRoles.length > 0 && (
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">Owner Role</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {uniqueRoles.map(role => (
-                      <label key={role} className="flex items-center gap-1.5 cursor-pointer">
-                        <Checkbox
-                          checked={filters.ownerRoles.includes(role)}
-                          onCheckedChange={() => handleRoleToggle(role)}
-                          className="w-3.5 h-3.5"
-                        />
-                        <span className="text-xs">{role}</span>
-                      </label>
-                    ))}
-                  </div>
+              {/* ICP Filter */}
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">ICP</Label>
+                <div className="flex flex-wrap gap-2">
+                  {ICP_OPTIONS.map(icp => (
+                    <label key={icp.value} className="flex items-center gap-1.5 cursor-pointer">
+                      <Checkbox
+                        checked={filters.icps.includes(icp.value)}
+                        onCheckedChange={() => handleICPToggle(icp.value)}
+                        className="w-3.5 h-3.5"
+                      />
+                      <span className="text-xs">{icp.label}</span>
+                    </label>
+                  ))}
                 </div>
-              )}
+              </div>
             </CollapsibleContent>
           </Collapsible>
           
@@ -209,8 +214,10 @@ export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, classNa
                       <JobTypeBadge type={job.job_type} size="sm" />
                     </div>
                     <p className="truncate font-medium">{job.title}</p>
-                    {job.owner_role && (
-                      <p className="text-xs text-muted-foreground truncate">{job.owner_role}</p>
+                    {job.icp && (
+                      <div className="mt-1">
+                        <ICPBadge icp={job.icp} size="sm" />
+                      </div>
                     )}
                   </button>
                 ))
