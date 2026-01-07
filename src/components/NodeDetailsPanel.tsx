@@ -127,7 +127,7 @@ export function NodeDetailsPanel({ onEdit, className }: NodeDetailsPanelProps) {
         <Separator />
         
         {/* Quick I×S Score Editor */}
-        <div className="space-y-2">
+        <div className="space-y-2 overflow-hidden">
           <h4 className="text-sm font-medium text-muted-foreground">Quick I×S Scoring</h4>
           <QuickScoreEditor
             importance={job.importance}

@@ -170,9 +170,30 @@ export function GraphVisualization({ className }: GraphVisualizationProps) {
       .attr('font-size', '10px')
       .attr('pointer-events', 'none');
 
+    // Click to select, hover handled via D3 only (no React state) to prevent simulation restart
     node.on('click', (_, d) => setSelectedNode(d.id))
-      .on('mouseenter', (_, d) => setHoveredNode(d.id))
-      .on('mouseleave', () => setHoveredNode(null));
+      .on('mouseenter', function(event, d) {
+        // Highlight on hover using D3 only - no state change to prevent re-render
+        d3.select(this).select('circle')
+          .transition()
+          .duration(100)
+          .attr('r', 12 + (d.tensionScore / 10))
+          .attr('stroke', '#fff')
+          .attr('stroke-width', 3);
+      })
+      .on('mouseleave', function(event, d) {
+        d3.select(this).select('circle')
+          .transition()
+          .duration(100)
+          .attr('r', 8 + (d.tensionScore / 10))
+          .attr('stroke', () => {
+            if (selectedNodeId === d.id) return '#fff';
+            if (showCriticalPath && d.isOnCriticalPath) return '#f59e0b';
+            if (showLoops && d.isInCycle) return '#ef4444';
+            return 'transparent';
+          })
+          .attr('stroke-width', (selectedNodeId === d.id || (showCriticalPath && d.isOnCriticalPath)) ? 3 : 2);
+      });
 
     simulation.on('tick', () => {
       link

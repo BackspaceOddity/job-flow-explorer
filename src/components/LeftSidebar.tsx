@@ -170,7 +170,7 @@ export function LeftSidebar({ onCreateJob, onCreateEdge, onImportExport, onAnaly
               {/* ICP Filter */}
               <div className="space-y-2">
                 <Label className="text-xs text-muted-foreground">ICP</Label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-col gap-1.5">
                   {ICP_OPTIONS.map(icp => (
                     <label key={icp.value} className="flex items-center gap-1.5 cursor-pointer">
                       <Checkbox

@@ -346,10 +346,10 @@ export function JobMapView({ className }: JobMapViewProps) {
         </div>
       </div>
       
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto min-h-0">
         {/* List View */}
         {viewMode === 'list' && (
-          <div className="p-4">
+          <div className="p-4 pb-8">
             <JobListView 
               jobs={filteredJobs} 
               l0Jobs={l0Jobs.filter(j => !selectedMainJobId || j.id === selectedMainJobId)}
@@ -361,7 +361,7 @@ export function JobMapView({ className }: JobMapViewProps) {
         
         {/* Canvas View */}
         {viewMode === 'canvas' && (
-        <div className="p-4 min-w-[1200px]">
+        <div className="p-4 min-w-[1200px] pb-8">
           {/* Job Map Grid */}
           <div>
             <table className="w-full border-collapse">
