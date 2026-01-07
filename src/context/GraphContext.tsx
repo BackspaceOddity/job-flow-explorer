@@ -563,7 +563,7 @@ export function GraphProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useGraph() {
+export function useGraph(): GraphContextValue {
   const context = useContext(GraphContext);
   if (!context) {
     throw new Error('useGraph must be used within a GraphProvider');
