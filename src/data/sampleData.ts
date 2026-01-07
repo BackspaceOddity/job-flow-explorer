@@ -14,242 +14,144 @@ export const MAIN_JOB_TITLES = {
   HANDLE_TERMINATIONS: 'Handle cross-border terminations legally',
 };
 
-// Helper to create jobs with outcome keywords
-const outcome = (title: string, desc: string, stage: JobStage, icp: ICP, mainJob: string): Omit<Job, 'id'> => ({
+// Helper to create sub-jobs with proper structure
+const step = (title: string, stage: JobStage, icp: ICP, mainJob: string, importance = 8, satisfaction = 4): Omit<Job, 'id'> => ({
   title,
-  description: `Desired outcome: ${desc}`,
+  description: '',
   level: 1,
   parent_id: null,
   icp,
   job_type: 'functional',
   notes: '',
-  importance: 8,
-  satisfaction: 4,
+  importance,
+  satisfaction,
   job_stage: stage,
   main_job_id: '__MAIN:' + mainJob,
 });
 
-// Helper to create jobs with barrier keywords
-const barrier = (title: string, barrierDesc: string, stage: JobStage, icp: ICP, mainJob: string): Omit<Job, 'id'> => ({
+const outcome = (title: string, stage: JobStage, icp: ICP, mainJob: string, importance = 9, satisfaction = 4): Omit<Job, 'id'> => ({
   title,
-  description: 'Address critical challenge in process',
+  description: 'Desired outcome',
   level: 1,
   parent_id: null,
   icp,
   job_type: 'functional',
-  notes: `barrier: ${barrierDesc}`,
-  importance: 7,
-  satisfaction: 3,
+  notes: '',
+  importance,
+  satisfaction,
   job_stage: stage,
   main_job_id: '__MAIN:' + mainJob,
 });
 
-// Sample data for demonstration using Jim Kalbach's syntax: Verb + Object + Contextual Clarifier
+const barrier = (title: string, stage: JobStage, icp: ICP, mainJob: string, importance = 7, satisfaction = 3): Omit<Job, 'id'> => ({
+  title,
+  description: '',
+  level: 1,
+  parent_id: null,
+  icp,
+  job_type: 'functional',
+  notes: 'barrier',
+  importance,
+  satisfaction,
+  job_stage: stage,
+  main_job_id: '__MAIN:' + mainJob,
+});
+
+const emotional = (title: string, stage: JobStage, icp: ICP, mainJob: string, importance = 8, satisfaction = 4): Omit<Job, 'id'> => ({
+  title,
+  description: '',
+  level: 1,
+  parent_id: null,
+  icp,
+  job_type: 'emotional',
+  notes: '',
+  importance,
+  satisfaction,
+  job_stage: stage,
+  main_job_id: '__MAIN:' + mainJob,
+});
+
+const social = (title: string, stage: JobStage, icp: ICP, mainJob: string, importance = 7, satisfaction = 5): Omit<Job, 'id'> => ({
+  title,
+  description: '',
+  level: 1,
+  parent_id: null,
+  icp,
+  job_type: 'social',
+  notes: '',
+  importance,
+  satisfaction,
+  job_stage: stage,
+  main_job_id: '__MAIN:' + mainJob,
+});
+
+const differentiator = (title: string, stage: JobStage, icp: ICP, mainJob: string, importance = 6, satisfaction = 4): Omit<Job, 'id'> => ({
+  title,
+  description: 'differentiator',
+  level: 2,
+  parent_id: null,
+  icp,
+  job_type: 'functional',
+  notes: '',
+  importance,
+  satisfaction,
+  job_stage: stage,
+  main_job_id: '__MAIN:' + mainJob,
+});
+
 export const sampleJobs: Omit<Job, 'id'>[] = [
-  // ========== L0 MAIN JOBS (10 total) - No job_stage, no main_job_id ==========
-  {
-    title: MAIN_JOB_TITLES.EXPAND_WORKFORCE,
-    description: 'Strategic initiative to hire employees in a new country for global expansion',
-    level: 0,
-    parent_id: null,
-    icp: 'ceo',
-    job_type: 'functional',
-    notes: 'Core main job - all sub-jobs map to this',
-    importance: 10,
-    satisfaction: 2,
-    job_stage: null,
-    main_job_id: null,
-  },
-  {
-    title: MAIN_JOB_TITLES.ENSURE_COMPLIANCE,
-    description: 'Maintain adherence to employment regulations in every operating country',
-    level: 0,
-    parent_id: null,
-    icp: 'head_of_legal',
-    job_type: 'functional',
-    notes: 'Critical for risk mitigation',
-    importance: 10,
-    satisfaction: 3,
-    job_stage: null,
-    main_job_id: null,
-  },
-  {
-    title: MAIN_JOB_TITLES.BUILD_COMPENSATION,
-    description: 'Design fair and attractive pay structures across different markets',
-    level: 0,
-    parent_id: null,
-    icp: 'head_of_finance',
-    job_type: 'functional',
-    notes: 'Balance competitiveness with budget',
-    importance: 9,
-    satisfaction: 4,
-    job_stage: null,
-    main_job_id: null,
-  },
-  {
-    title: MAIN_JOB_TITLES.ONBOARD_EMPLOYEES,
-    description: 'Integrate new hires into company regardless of location',
-    level: 0,
-    parent_id: null,
-    icp: 'hr_manager',
-    job_type: 'functional',
-    notes: 'Key for retention and productivity',
-    importance: 9,
-    satisfaction: 3,
-    job_stage: null,
-    main_job_id: null,
-  },
-  {
-    title: MAIN_JOB_TITLES.MANAGE_PAYROLL,
-    description: 'Process accurate payments in local currencies on time',
-    level: 0,
-    parent_id: null,
-    icp: 'head_of_finance',
-    job_type: 'functional',
-    notes: 'Complex with multiple currencies and tax regimes',
-    importance: 9,
-    satisfaction: 4,
-    job_stage: null,
-    main_job_id: null,
-  },
-  {
-    title: MAIN_JOB_TITLES.ESTABLISH_ENTITY,
-    description: 'Set up legal presence in target countries for direct hiring',
-    level: 0,
-    parent_id: null,
-    icp: 'head_of_legal',
-    job_type: 'functional',
-    notes: 'Alternative to EOR for long-term presence',
-    importance: 8,
-    satisfaction: 3,
-    job_stage: null,
-    main_job_id: null,
-  },
-  {
-    title: MAIN_JOB_TITLES.NAVIGATE_VISAS,
-    description: 'Secure work authorization for employees in foreign countries',
-    level: 0,
-    parent_id: null,
-    icp: 'hr_manager',
-    job_type: 'functional',
-    notes: 'Often time-sensitive and complex',
-    importance: 8,
-    satisfaction: 2,
-    job_stage: null,
-    main_job_id: null,
-  },
-  {
-    title: MAIN_JOB_TITLES.CREATE_CULTURE,
-    description: 'Build cohesive team identity across geographic boundaries',
-    level: 0,
-    parent_id: null,
-    icp: 'ceo',
-    job_type: 'functional',
-    notes: 'Essential for distributed team success',
-    importance: 8,
-    satisfaction: 4,
-    job_stage: null,
-    main_job_id: null,
-  },
-  {
-    title: MAIN_JOB_TITLES.MONITOR_PERFORMANCE,
-    description: 'Track and evaluate distributed employee productivity and outcomes',
-    level: 0,
-    parent_id: null,
-    icp: 'hiring_manager',
-    job_type: 'functional',
-    notes: 'Challenge: visibility without micromanagement',
-    importance: 7,
-    satisfaction: 3,
-    job_stage: null,
-    main_job_id: null,
-  },
-  {
-    title: MAIN_JOB_TITLES.HANDLE_TERMINATIONS,
-    description: 'Execute compliant offboarding in different legal frameworks',
-    level: 0,
-    parent_id: null,
-    icp: 'head_of_legal',
-    job_type: 'functional',
-    notes: 'High risk of legal issues if mishandled',
-    importance: 7,
-    satisfaction: 2,
-    job_stage: null,
-    main_job_id: null,
-  },
+  // ========== L0 MAIN JOBS (10 total) - No job_stage ==========
+  { title: MAIN_JOB_TITLES.EXPAND_WORKFORCE, description: 'Strategic initiative to hire employees in a new country', level: 0, parent_id: null, icp: 'ceo', job_type: 'functional', notes: '', importance: 10, satisfaction: 2, job_stage: null, main_job_id: null },
+  { title: MAIN_JOB_TITLES.ENSURE_COMPLIANCE, description: 'Maintain adherence to employment regulations', level: 0, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 10, satisfaction: 3, job_stage: null, main_job_id: null },
+  { title: MAIN_JOB_TITLES.BUILD_COMPENSATION, description: 'Design fair pay structures across markets', level: 0, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 9, satisfaction: 4, job_stage: null, main_job_id: null },
+  { title: MAIN_JOB_TITLES.ONBOARD_EMPLOYEES, description: 'Integrate new hires regardless of location', level: 0, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 9, satisfaction: 3, job_stage: null, main_job_id: null },
+  { title: MAIN_JOB_TITLES.MANAGE_PAYROLL, description: 'Process accurate payments in local currencies', level: 0, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 9, satisfaction: 4, job_stage: null, main_job_id: null },
+  { title: MAIN_JOB_TITLES.ESTABLISH_ENTITY, description: 'Set up legal presence in target countries', level: 0, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 8, satisfaction: 3, job_stage: null, main_job_id: null },
+  { title: MAIN_JOB_TITLES.NAVIGATE_VISAS, description: 'Secure work authorization for employees', level: 0, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 8, satisfaction: 2, job_stage: null, main_job_id: null },
+  { title: MAIN_JOB_TITLES.CREATE_CULTURE, description: 'Build cohesive team identity across boundaries', level: 0, parent_id: null, icp: 'ceo', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: null, main_job_id: null },
+  { title: MAIN_JOB_TITLES.MONITOR_PERFORMANCE, description: 'Track distributed employee productivity', level: 0, parent_id: null, icp: 'hiring_manager', job_type: 'functional', notes: '', importance: 7, satisfaction: 3, job_stage: null, main_job_id: null },
+  { title: MAIN_JOB_TITLES.HANDLE_TERMINATIONS, description: 'Execute compliant offboarding globally', level: 0, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 7, satisfaction: 2, job_stage: null, main_job_id: null },
 
-  // ========== L1/L2 JOBS FOR: Expand workforce into new international market ==========
-  // STEPS - L1 functional
-  { title: 'Define expansion goals for target market entry', description: 'Establish clear objectives and success criteria for international hiring', level: 1, parent_id: null, icp: 'ceo', job_type: 'functional', notes: '', importance: 9, satisfaction: 3, job_stage: 'define', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Identify compliance requirements for target jurisdiction', description: 'Research employment laws, regulations, and legal constraints', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 9, satisfaction: 4, job_stage: 'define', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Locate qualified legal counsel in target jurisdiction', description: 'Find and vet local legal partners for employment law guidance', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'locate', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Assess talent availability in target region', description: 'Research local job market and candidate pool quality', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'functional', notes: '', importance: 8, satisfaction: 5, job_stage: 'locate', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Calculate employment costs for offshore workforce', description: 'Estimate total cost including salary, benefits, taxes, and overhead', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Confirm budget allocation for international hiring', description: 'Secure financial approval and allocate resources', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 8, satisfaction: 3, job_stage: 'confirm', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Select entity structure for market entry', description: 'Decide between EOR, subsidiary, or branch office', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 9, satisfaction: 4, job_stage: 'confirm', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Screen candidates for cultural fit remotely', description: 'Evaluate candidates for alignment with company values and culture', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'functional', notes: '', importance: 8, satisfaction: 3, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Follow up on employee integration progress', description: 'Track new hire satisfaction and team integration metrics', level: 1, parent_id: null, icp: 'hiring_manager', job_type: 'functional', notes: '', importance: 6, satisfaction: 5, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  
-  // DIFFERENTIATORS - L2 functional
-  { title: 'Prepare compliance documentation for market entry', description: 'Draft required legal and regulatory filings', level: 2, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 7, satisfaction: 5, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Execute employee onboarding across time zones', description: 'Implement remote onboarding program for new international hires', level: 2, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 9, satisfaction: 2, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Create compliant employment agreements for local hires', description: 'Draft contracts meeting local labor law requirements', level: 2, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 8, satisfaction: 5, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Monitor payroll compliance in new jurisdiction', description: 'Track and ensure ongoing payroll tax and reporting compliance', level: 2, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 7, satisfaction: 4, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Modify employment contracts for local requirements', description: 'Adjust contracts based on regulatory changes or feedback', level: 2, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 6, satisfaction: 6, job_stage: 'modify', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Conclude visa processing for new hires', description: 'Complete all immigration documentation and approvals', level: 2, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 5, satisfaction: 7, job_stage: 'conclude', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  
-  // OUTCOMES
-  outcome('Achieve legal presence in target market', 'establish operational foundation for hiring', 'confirm', 'ceo', MAIN_JOB_TITLES.EXPAND_WORKFORCE),
-  outcome('Secure first international hire successfully', 'validate hiring process works', 'execute', 'hiring_manager', MAIN_JOB_TITLES.EXPAND_WORKFORCE),
-  outcome('Complete market entry within timeline', 'meet strategic expansion deadlines', 'conclude', 'ceo', MAIN_JOB_TITLES.EXPAND_WORKFORCE),
-  
-  // BARRIERS
-  barrier('Navigate complex regulatory requirements', 'regulations vary significantly by country', 'prepare', 'head_of_legal', MAIN_JOB_TITLES.EXPAND_WORKFORCE),
-  barrier('Overcome talent scarcity in region', 'limited qualified candidates available', 'locate', 'hiring_manager', MAIN_JOB_TITLES.EXPAND_WORKFORCE),
-  barrier('Manage unexpected compliance costs', 'hidden fees and requirements emerge', 'execute', 'head_of_finance', MAIN_JOB_TITLES.EXPAND_WORKFORCE),
-  
-  // EMOTIONAL
-  { title: 'Feel confident about regulatory compliance', description: 'Achieve peace of mind that all legal requirements are met', level: 1, parent_id: null, icp: 'ceo', job_type: 'emotional', notes: '', importance: 9, satisfaction: 2, job_stage: 'confirm', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Avoid reputational risk in new market', description: 'Ensure company actions align with local expectations and norms', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'emotional', notes: '', importance: 8, satisfaction: 5, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Feel excited about growth opportunity', description: 'Experience positive anticipation for expansion', level: 1, parent_id: null, icp: 'ceo', job_type: 'emotional', notes: '', importance: 7, satisfaction: 6, job_stage: 'define', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  
-  // SOCIAL
-  { title: 'Build trust with new international team', description: 'Establish strong working relationships across cultures', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'social', notes: '', importance: 7, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Demonstrate company values to local hires', description: 'Reinforce culture and values through ongoing communication', level: 1, parent_id: null, icp: 'ceo', job_type: 'social', notes: '', importance: 6, satisfaction: 5, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
-  { title: 'Be recognized as a desirable employer locally', description: 'Build employer brand in new market', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'social', notes: '', importance: 6, satisfaction: 4, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.EXPAND_WORKFORCE },
+  // ========== EXPAND WORKFORCE - Sub-jobs ==========
+  step('Define expansion goals for target market', 'define', 'ceo', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 9, 3),
+  step('Identify compliance requirements for jurisdiction', 'define', 'head_of_legal', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 9, 4),
+  step('Locate qualified legal counsel locally', 'locate', 'head_of_legal', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 8, 4),
+  step('Assess talent availability in target region', 'locate', 'hiring_manager', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 8, 5),
+  step('Calculate employment costs for offshore workforce', 'prepare', 'head_of_finance', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 8, 4),
+  step('Confirm budget allocation for international hiring', 'confirm', 'head_of_finance', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 8, 3),
+  step('Select entity structure for market entry', 'confirm', 'head_of_legal', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 9, 4),
+  step('Screen candidates for cultural fit remotely', 'execute', 'hiring_manager', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 8, 3),
+  step('Follow up on employee integration progress', 'follow_up', 'hiring_manager', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 6, 5),
+  outcome('Achieve legal presence in target market', 'confirm', 'ceo', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 10, 3),
+  outcome('Secure first international hire successfully', 'execute', 'hiring_manager', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 9, 4),
+  barrier('Navigate complex regulatory requirements', 'prepare', 'head_of_legal', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 9, 2),
+  barrier('Overcome talent scarcity in region', 'locate', 'hiring_manager', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 7, 3),
+  emotional('Feel confident about regulatory compliance', 'confirm', 'ceo', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 9, 2),
+  emotional('Avoid reputational risk in new market', 'monitor', 'head_of_legal', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 8, 5),
+  social('Build trust with new international team', 'execute', 'hr_manager', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 7, 4),
+  social('Be recognized as desirable employer locally', 'monitor', 'hr_manager', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 6, 4),
+  differentiator('Prepare compliance documentation', 'prepare', 'head_of_legal', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 7, 5),
+  differentiator('Execute onboarding across time zones', 'execute', 'hr_manager', MAIN_JOB_TITLES.EXPAND_WORKFORCE, 9, 2),
 
-  // ========== L1/L2 JOBS FOR: Ensure compliance with labor laws ==========
-  // STEPS
-  { title: 'Define regulatory monitoring scope for each country', description: 'Identify which laws and regulations need tracking per jurisdiction', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 9, satisfaction: 4, job_stage: 'define', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ENSURE_COMPLIANCE },
-  { title: 'Locate reliable legal update sources per jurisdiction', description: 'Subscribe to legal newsletters and government bulletins', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 7, satisfaction: 5, job_stage: 'locate', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ENSURE_COMPLIANCE },
-  { title: 'Confirm internal compliance controls are adequate', description: 'Validate that processes catch issues before they escalate', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'confirm', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ENSURE_COMPLIANCE },
-  { title: 'Execute quarterly compliance audits', description: 'Perform regular reviews of employment practices', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ENSURE_COMPLIANCE },
-  { title: 'Monitor regulatory changes in real-time', description: 'Track law changes that affect employment practices', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 8, satisfaction: 3, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ENSURE_COMPLIANCE },
-  { title: 'Modify policies when regulations change', description: 'Update internal policies to match new requirements', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 7, satisfaction: 4, job_stage: 'modify', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ENSURE_COMPLIANCE },
-  
-  // DIFFERENTIATORS
-  { title: 'Prepare compliance checklist templates', description: 'Create standardized checklists for each jurisdiction', level: 2, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 7, satisfaction: 6, job_stage: 'prepare', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ENSURE_COMPLIANCE },
-  { title: 'Build automated compliance monitoring system', description: 'Implement technology to track regulatory changes', level: 2, parent_id: null, icp: 'head_of_legal', job_type: 'functional', notes: '', importance: 6, satisfaction: 3, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ENSURE_COMPLIANCE },
-  
-  // OUTCOMES
-  outcome('Achieve zero compliance violations', 'maintain perfect regulatory record', 'monitor', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE),
-  outcome('Pass all regulatory audits first time', 'demonstrate robust compliance systems', 'execute', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE),
-  
-  // BARRIERS
-  barrier('Keep up with rapid regulatory changes', 'laws change frequently across jurisdictions', 'monitor', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE),
-  barrier('Interpret ambiguous legal requirements', 'unclear guidance from regulators', 'define', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE),
-  
-  // EMOTIONAL
-  { title: 'Feel assured about legal exposure', description: 'Have confidence that company is protected from lawsuits', level: 1, parent_id: null, icp: 'ceo', job_type: 'emotional', notes: '', importance: 9, satisfaction: 3, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ENSURE_COMPLIANCE },
-  { title: 'Feel in control of compliance risk', description: 'Understand and manage all regulatory obligations', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'emotional', notes: '', importance: 8, satisfaction: 4, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ENSURE_COMPLIANCE },
-  
-  // SOCIAL
-  { title: 'Be seen as a compliant employer', description: 'Build reputation for following the rules', level: 1, parent_id: null, icp: 'ceo', job_type: 'social', notes: '', importance: 7, satisfaction: 5, job_stage: 'follow_up', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ENSURE_COMPLIANCE },
-  { title: 'Maintain trust with regulators', description: 'Build positive relationships with authorities', level: 1, parent_id: null, icp: 'head_of_legal', job_type: 'social', notes: '', importance: 6, satisfaction: 5, job_stage: 'monitor', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.ENSURE_COMPLIANCE },
+  // ========== ENSURE COMPLIANCE - Sub-jobs ==========
+  step('Define regulatory monitoring scope per country', 'define', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 9, 4),
+  step('Locate reliable legal update sources', 'locate', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 7, 5),
+  step('Confirm internal compliance controls are adequate', 'confirm', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 8, 4),
+  step('Execute quarterly compliance audits', 'execute', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 8, 4),
+  step('Monitor regulatory changes in real-time', 'monitor', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 8, 3),
+  step('Modify policies when regulations change', 'modify', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 7, 4),
+  outcome('Achieve zero compliance violations', 'monitor', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 10, 4),
+  outcome('Pass all regulatory audits first time', 'execute', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 9, 5),
+  barrier('Keep up with rapid regulatory changes', 'monitor', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 9, 2),
+  barrier('Interpret ambiguous legal requirements', 'define', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 8, 3),
+  emotional('Feel assured about legal exposure', 'monitor', 'ceo', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 9, 3),
+  emotional('Feel in control of compliance risk', 'execute', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 8, 4),
+  social('Be seen as a compliant employer', 'follow_up', 'ceo', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 7, 5),
+  differentiator('Prepare compliance checklist templates', 'prepare', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 7, 6),
+  differentiator('Build automated compliance monitoring', 'execute', 'head_of_legal', MAIN_JOB_TITLES.ENSURE_COMPLIANCE, 6, 3),
 
-  // ========== L1/L2 JOBS FOR: Build competitive compensation packages ==========
-  // STEPS
-  { title: 'Define compensation philosophy for global workforce', description: 'Establish principles for pay equity and competitiveness', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 8, satisfaction: 5, job_stage: 'define', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
+  // ========== BUILD COMPENSATION - Sub-jobs ==========
+  step('Define compensation philosophy for global workforce', 'define', 'head_of_finance', MAIN_JOB_TITLES.BUILD_COMPENSATION, 8, 5),
   { title: 'Locate salary benchmarking data per market', description: 'Source reliable compensation surveys for each country', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 8, satisfaction: 4, job_stage: 'locate', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
   { title: 'Confirm benefits packages meet local expectations', description: 'Validate that benefits are competitive in each market', level: 1, parent_id: null, icp: 'hr_manager', job_type: 'functional', notes: '', importance: 7, satisfaction: 4, job_stage: 'confirm', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
   { title: 'Execute annual compensation reviews globally', description: 'Perform coordinated salary reviews across all locations', level: 1, parent_id: null, icp: 'head_of_finance', job_type: 'functional', notes: '', importance: 7, satisfaction: 5, job_stage: 'execute', main_job_id: '__MAIN:' + MAIN_JOB_TITLES.BUILD_COMPENSATION },
