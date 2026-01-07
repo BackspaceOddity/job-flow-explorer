@@ -168,7 +168,7 @@ function GraphApp() {
         )}
 
         {/* Main View Area */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative overflow-hidden">
           {activeView === 'graph' && (
             <>
               <GraphVisualization />

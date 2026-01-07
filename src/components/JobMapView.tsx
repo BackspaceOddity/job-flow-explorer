@@ -64,6 +64,7 @@ function JobListView({
   onSelectJob: (id: string) => void;
 }) {
   const [expandedJobs, setExpandedJobs] = useState<Set<string>>(new Set(l0Jobs.map(j => j.id)));
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   
   const toggleExpanded = (id: string) => {
     setExpandedJobs(prev => {
@@ -72,6 +73,10 @@ function JobListView({
       else next.add(id);
       return next;
     });
+  };
+  
+  const toggleSort = () => {
+    setSortDirection(prev => prev === 'desc' ? 'asc' : 'desc');
   };
   
   // Group jobs by main_job_id
@@ -89,10 +94,23 @@ function JobListView({
     }
   });
   
+  // Sort jobs within each group by opportunity score
+  const getSortedJobs = (jobsList: Job[]) => {
+    return [...jobsList].sort((a, b) => {
+      const scoreA = (a.importance !== null && a.satisfaction !== null) 
+        ? computeOpportunityScore(a.importance, a.satisfaction) 
+        : -999;
+      const scoreB = (b.importance !== null && b.satisfaction !== null) 
+        ? computeOpportunityScore(b.importance, b.satisfaction) 
+        : -999;
+      return sortDirection === 'desc' ? scoreB - scoreA : scoreA - scoreB;
+    });
+  };
+  
   return (
     <div className="space-y-2">
       {l0Jobs.map(mainJob => {
-        const subJobs = jobsByMainJob.get(mainJob.id) || [];
+        const subJobs = getSortedJobs(jobsByMainJob.get(mainJob.id) || []);
         const isExpanded = expandedJobs.has(mainJob.id);
         
         return (
@@ -121,16 +139,22 @@ function JobListView({
                 <Table>
                   <TableHeader>
                     <TableRow className="text-[10px]">
-                      <TableHead className="w-[40%]">Job</TableHead>
+                      <TableHead className="w-[40px] text-center">#</TableHead>
+                      <TableHead className="w-[35%]">Job</TableHead>
                       <TableHead className="w-[60px]">Level</TableHead>
                       <TableHead className="w-[80px]">Type</TableHead>
                       <TableHead className="w-[100px]">Stage</TableHead>
                       <TableHead className="w-[60px] text-center">I×S</TableHead>
-                      <TableHead className="w-[50px] text-center">Opp</TableHead>
+                      <TableHead 
+                        className="w-[60px] text-center cursor-pointer hover:text-foreground select-none"
+                        onClick={toggleSort}
+                      >
+                        Opp {sortDirection === 'desc' ? '↓' : '↑'}
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {subJobs.map(job => {
+                    {subJobs.map((job, index) => {
                       const hasScores = job.importance !== null && job.satisfaction !== null;
                       const score = hasScores ? computeOpportunityScore(job.importance!, job.satisfaction!) : null;
                       const underserved = hasScores && isUnderserved(job.importance!, job.satisfaction!);
@@ -144,6 +168,9 @@ function JobListView({
                           )}
                           onClick={() => onSelectJob(job.id)}
                         >
+                          <TableCell className="py-2 text-center">
+                            <span className="font-mono text-muted-foreground text-[10px]">#{index + 1}</span>
+                          </TableCell>
                           <TableCell className="py-2">
                             <p className="line-clamp-2">{job.title}</p>
                           </TableCell>
@@ -176,7 +203,7 @@ function JobListView({
                     })}
                     {subJobs.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center text-muted-foreground py-4">
+                        <TableCell colSpan={7} className="text-center text-muted-foreground py-4">
                           No sub-jobs found
                         </TableCell>
                       </TableRow>
@@ -282,7 +309,7 @@ export function JobMapView({ className }: JobMapViewProps) {
   const jobsWithoutStages = filteredJobs.filter(j => !j.job_stage);
   
   return (
-    <div className={cn('flex flex-col h-full bg-background', className)}>
+    <div className={cn('flex flex-col h-full overflow-hidden bg-background', className)}>
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between gap-4">
@@ -346,7 +373,7 @@ export function JobMapView({ className }: JobMapViewProps) {
         </div>
       </div>
       
-      <div className="flex-1 overflow-auto min-h-0">
+      <div className="flex-1 overflow-auto min-h-0 max-h-full">
         {/* List View */}
         {viewMode === 'list' && (
           <div className="p-4 pb-8">

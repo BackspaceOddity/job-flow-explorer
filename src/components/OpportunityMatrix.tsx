@@ -3,6 +3,7 @@ import { useGraph } from '@/context/GraphContext';
 import { cn } from '@/lib/utils';
 import { computeOpportunityScore, getQuadrant, QUADRANT_CONFIG } from '@/lib/opportunityScoring';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { JobType } from '@/types/graph';
 
 // Deterministic hash for consistent jitter per job
 const hashCode = (str: string): number => {
@@ -12,6 +13,13 @@ const hashCode = (str: string): number => {
     hash |= 0;
   }
   return hash;
+};
+
+// Job type colors for matrix dots
+const JOB_TYPE_DOT_COLORS: Record<JobType, { bg: string; border: string }> = {
+  functional: { bg: 'bg-[hsl(199,89%,48%)]', border: 'border-[hsl(199,89%,58%)]' },
+  emotional: { bg: 'bg-[hsl(340,82%,52%)]', border: 'border-[hsl(340,82%,62%)]' },
+  social: { bg: 'bg-[hsl(38,92%,50%)]', border: 'border-[hsl(38,92%,60%)]' },
 };
 
 interface OpportunityMatrixProps {
@@ -111,6 +119,8 @@ export function OpportunityMatrix({ className, onJobSelect }: OpportunityMatrixP
             // Dynamic dot size based on total count
             const dotSize = scoredJobs.length > 100 ? 'w-3 h-3' : 'w-4 h-4';
             
+            const typeColors = JOB_TYPE_DOT_COLORS[job.job_type];
+            
             return (
               <Tooltip key={job.id}>
                 <TooltipTrigger asChild>
@@ -119,11 +129,9 @@ export function OpportunityMatrix({ className, onJobSelect }: OpportunityMatrixP
                       'absolute rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-all',
                       dotSize,
                       'border-2 hover:scale-150 hover:z-10',
-                      isSelected && 'ring-2 ring-primary ring-offset-2 ring-offset-background scale-150 z-10',
-                      quadrant === 'opportunity' && 'bg-green-500 border-green-300',
-                      quadrant === 'appropriately_served' && 'bg-yellow-500 border-yellow-300',
-                      quadrant === 'over_served' && 'bg-red-500 border-red-300',
-                      quadrant === 'dont_invest' && 'bg-muted-foreground border-muted'
+                      typeColors.bg,
+                      typeColors.border,
+                      isSelected && 'ring-2 ring-white ring-offset-2 ring-offset-background scale-150 z-10'
                     )}
                     style={{ left: `${x}%`, top: `${y}%` }}
                     onClick={() => handleJobClick(job.id)}
@@ -160,14 +168,19 @@ export function OpportunityMatrix({ className, onJobSelect }: OpportunityMatrixP
       
       {/* Legend */}
       <div className="p-4 border-t border-border">
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          {Object.entries(QUADRANT_CONFIG).map(([key, config]) => (
-            <div key={key} className="flex items-center gap-2">
-              <div className={cn('w-3 h-3 rounded-full', config.bgClass, config.textClass)} 
-                style={{ backgroundColor: config.color }} />
-              <span className="text-muted-foreground">{config.label}</span>
-            </div>
-          ))}
+        <div className="flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-[hsl(199,89%,48%)]" />
+            <span className="text-muted-foreground">Functional</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-[hsl(340,82%,52%)]" />
+            <span className="text-muted-foreground">Emotional</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-[hsl(38,92%,50%)]" />
+            <span className="text-muted-foreground">Social</span>
+          </div>
         </div>
       </div>
     </div>
