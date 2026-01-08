@@ -147,8 +147,8 @@ export function NodeDetailsPanel({ onEdit, className }: NodeDetailsPanelProps) {
         
         <Separator />
         
-        {/* Graph Metrics */}
-        {metrics && <NodeMetricsDisplay metrics={metrics} />}
+        {/* Job Impact Analysis */}
+        {metrics && <NodeMetricsDisplay metrics={metrics} job={job} />}
         
         <Separator />
         
