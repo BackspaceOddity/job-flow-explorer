@@ -248,7 +248,7 @@ function GraphApp() {
       </div>
 
       {/* Right Sidebar */}
-      <div className="w-80 shrink-0 border-l border-border bg-card">
+      <div className="w-80 shrink-0 border-l border-border bg-card h-full overflow-hidden">
         <NodeDetailsPanel onEdit={handleEditJob} />
       </div>
 
